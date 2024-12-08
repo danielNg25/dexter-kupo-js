@@ -1,0 +1,21 @@
+{
+    "bAsset": {
+        "tokenName": "u00000x426f6f6b206f66205375676172",
+        "currencySymbol": "ab022fb2ca4fcabd273cd891f16432e4cd2fc9e8fa36d2a3c9770e2c"
+    },
+    "mainNFT": {
+        "tokenName": "",
+        "currencySymbol": "147714f2b760ff659c4809098f78dacd56d416337876f67e909eca34"
+    },
+    "operatorToken": {
+        "tokenName": "VyFi_Credential",
+        "currencySymbol": "4d07e0ceae00e6c53598cea00a53c54a94c6b6aa071482244cc0adb5"
+    },
+    "lpTokenName": { "unTokenName": "VyFi_DJED/Book of Sugar_LP" },
+    "aAsset": {
+        "tokenName": "u00000x446a65644d6963726f555344",
+        "currencySymbol": "8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61"
+    },
+    "feesSettings": { "barFee": 10, "processFee": 1900000, "liqFee": 20 },
+    "stakeKey": "b6811a70cfdddcc753a33d5bc895bf9912793cf7e225517fbf1d206b"
+}
