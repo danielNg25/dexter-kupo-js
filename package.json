@@ -1,5 +1,5 @@
 {
-    "name": "swapping",
+    "name": "dexter-kupo-js",
     "version": "0.1.0",
     "description": "Swapping bot",
     "main": "./build/index.js",
