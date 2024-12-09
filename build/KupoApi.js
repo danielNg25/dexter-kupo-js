@@ -1,13 +1,13 @@
 import { addresses, addressesUtxos } from './endpoints/addresses';
 import { assetsTransactions, assetsUtxos } from './endpoints/assets';
-import { LOVELACE, joinPolicyId } from './utils';
+import { LOVELACE, joinPolicyId, removeTrailingSlash } from './utils';
 class KupoApi {
     constructor(apiUrl) {
         this.addresses = addresses;
         this.addressesUtxos = addressesUtxos;
         this.assetsTransactions = assetsTransactions;
         this.assetsUtxos = assetsUtxos;
-        this.apiUrl = apiUrl;
+        this.apiUrl = removeTrailingSlash(apiUrl);
     }
     buildMatches(match, unspent) {
         return `${this.apiUrl}/matches/${match}${unspent ? '?unspent' : ''}`;

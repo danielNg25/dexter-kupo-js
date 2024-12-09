@@ -21,9 +21,7 @@ import { WingRiders } from './dex/wingriders';
 import { WingRidersV2 } from './dex/wingriders-v2';
 
 const main = async () => {
-    const kupo = new KupoApi(
-        'https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/'
-    );
+    const kupo = new KupoApi('http://192.168.0.104:1444/');
 
     const minswap = new SundaeSwapV1(kupo);
 

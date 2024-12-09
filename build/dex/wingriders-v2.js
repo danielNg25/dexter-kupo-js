@@ -6,7 +6,7 @@ import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 const MIN_POOL_ADA = 3000000n;
-class WingRidersV2 extends BaseDex {
+export class WingRidersV2 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
         /**
@@ -119,4 +119,3 @@ class WingRidersV2 extends BaseDex {
     }
 }
 WingRidersV2.identifier = DEX_IDENTIFIERS.WINGRIDER;
-export { WingRidersV2 };

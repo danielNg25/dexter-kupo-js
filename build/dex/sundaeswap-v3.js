@@ -5,7 +5,7 @@ import { cborToDatumJson } from './definitions/utils';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
-class SundaeSwapV3 extends BaseDex {
+export class SundaeSwapV3 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
         /**
@@ -106,4 +106,3 @@ class SundaeSwapV3 extends BaseDex {
     }
 }
 SundaeSwapV3.identifier = DEX_IDENTIFIERS.SUNDAESWAPV3;
-export { SundaeSwapV3 };

@@ -2,7 +2,7 @@ import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
-class Minswap extends BaseDex {
+export class Minswap extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
         /**
@@ -83,4 +83,3 @@ class Minswap extends BaseDex {
     }
 }
 Minswap.identifier = DEX_IDENTIFIERS.MINSWAP;
-export { Minswap };

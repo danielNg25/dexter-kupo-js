@@ -23,7 +23,7 @@ function writeVyfinanceDataToFile(data, filePath) {
     // Write the structured data to a JSON file
     fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
 }
-class Vyfinance extends BaseDex {
+export class Vyfinance extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
         /**
@@ -122,4 +122,3 @@ class Vyfinance extends BaseDex {
     }
 }
 Vyfinance.identifier = DEX_IDENTIFIERS.VYFINANCE;
-export { Vyfinance };

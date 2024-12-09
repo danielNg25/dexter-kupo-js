@@ -3,7 +3,7 @@ import { BlockFrostAPI } from '@blockfrost/blockfrost-js';
 import { SundaeSwapV1 } from './dex/sundaeswap-v1';
 const url = 'https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/matches/addr1qyzk2jnlyklmcpjlaqt8r73uqmdkmq8jdl83uvgf6crnnqcjtcz8hchkwxt6s9afm7eqzlx4y4v5r93sl6eph6k9f54s24cyg5';
 const main = async () => {
-    const kupo = new KupoApi('https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/');
+    const kupo = new KupoApi('http://192.168.0.104:1444/');
     const minswap = new SundaeSwapV1(kupo);
     // console.log(await minswap.allLiquidityPoolDatas());
     const start = new Date().getTime();

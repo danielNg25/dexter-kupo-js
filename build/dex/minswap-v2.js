@@ -5,7 +5,7 @@ import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 import pool from './definitions/minswap-v2/pool';
 import { cborToDatumJson } from './definitions/utils';
-class MinswapV2 extends BaseDex {
+export class MinswapV2 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
         /**
@@ -99,4 +99,3 @@ class MinswapV2 extends BaseDex {
     }
 }
 MinswapV2.identifier = DEX_IDENTIFIERS.MINSWAPV2;
-export { MinswapV2 };
