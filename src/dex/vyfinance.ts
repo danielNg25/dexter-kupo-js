@@ -177,42 +177,50 @@ export class Vyfinance extends BaseDex {
         tokenB = tokenB.split('.').join('');
         tokenA = tokenA.split('.').join('');
 
+        // Ensure the file exists
         if (!fs.existsSync(filePath)) {
             const data = await this.allLiquidityPoolDatas();
             writeVyfinanceDataToFile(data, filePath);
         }
 
+        // Parse the structured data
         let structuredData: Record<
             string,
             Record<string, Array<VyfinancePoolData>>
         > = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        if (
-            !structuredData[tokenB][tokenA] &&
-            !structuredData[tokenA][tokenB]
-        ) {
+
+        // Check if the structure is defined before accessing nested properties
+        const tokenBData = structuredData[tokenB] || {};
+        const tokenAData = structuredData[tokenA] || {};
+
+        if (!tokenBData[tokenA] && !tokenAData[tokenB]) {
             const data = await this.allLiquidityPoolDatas();
             writeVyfinanceDataToFile(data, filePath);
             structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-            if (
-                !structuredData[tokenB][tokenA] &&
-                !structuredData[tokenA][tokenB]
-            ) {
-                return Promise.resolve(undefined);
+            // Update the structure again after refetching
+            const newTokenBData = structuredData[tokenB] || {};
+            const newTokenAData = structuredData[tokenA] || {};
+
+            if (!newTokenBData[tokenA] && !newTokenAData[tokenB]) {
+                return undefined;
             }
         }
 
+        // Aggregate pool data
         const poolDatas: Array<VyfinancePoolData> = [
             ...(structuredData[tokenB]?.[tokenA] || []),
             ...(structuredData[tokenA]?.[tokenB] || []),
         ];
 
+        // Fetch pools
         const pools = await Promise.all(
             poolDatas.map(async (poolData) =>
                 this.liquidityPoolFromPoolId(poolData.poolNftPolicyId)
             )
         );
 
+        // Return filtered pools
         return pools.filter((pool) => pool !== undefined) as LiquidityPool[];
     }
 }
