@@ -4,6 +4,7 @@ import { LiquidityPool } from './liquidity-pool';
 
 export abstract class BaseDex {
     public kupoApi: KupoApi;
+    public identifier!: string;
 
     constructor(kupoApi: KupoApi) {
         this.kupoApi = kupoApi;

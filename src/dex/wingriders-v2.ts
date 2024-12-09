@@ -1,5 +1,4 @@
 import { KupoApi } from '../KupoApi';
-import { Asset } from '../models/asset';
 import { Unit, UTXO } from '../types';
 import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';

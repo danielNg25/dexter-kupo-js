@@ -1,4 +1,5 @@
 import { Asset, Token } from '../../models/asset';
+import { handleError } from '../../utils';
 import { BaseDex } from './base-dex';
 
 export class LiquidityPool {
@@ -60,5 +61,26 @@ export class LiquidityPool {
             Number(this.reserveB) / 10 ** assetBDecimals;
 
         return adjustedReserveA / adjustedReserveB;
+    }
+
+    async updateReserves() {
+        try {
+            const liquidityPool = await this.dex.liquidityPoolFromPoolId(
+                this.poolId
+            );
+            if (!liquidityPool)
+                throw Error(
+                    `Error updating reserves ${this.dex.identifier} - ${this.poolId}`
+                );
+
+            this.reserveA = liquidityPool.reserveA;
+            this.reserveB = liquidityPool.reserveB;
+        } catch (e) {
+            handleError(e);
+        }
+    }
+
+    async updatePoolData() {
+        await this.updateReserves();
     }
 }

@@ -6,11 +6,7 @@ import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 import pool from './definitions/minswap-v2/pool';
-import {
-    DefinitionField,
-    DatumParameters,
-    DefinitionConstr,
-} from './definitions/types';
+import { DatumParameters, DefinitionConstr } from './definitions/types';
 import { cborToDatumJson } from './definitions/utils';
 
 export class MinswapV2 extends BaseDex {
@@ -127,7 +123,6 @@ export class MinswapV2 extends BaseDex {
         if (!poolId.startsWith(this.lpTokenPolicyId)) {
             poolId = `${this.lpTokenPolicyId}${poolId}`;
         }
-        console.log('poolId', poolId);
         const utxos = await this.allLiquidityPoolUtxos();
 
         let foundUtxo = utxos.find((utxo) => {
