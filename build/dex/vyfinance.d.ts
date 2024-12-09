@@ -1,0 +1,33 @@
+import { KupoApi } from '../KupoApi';
+import { UTXO } from '../types';
+import { BaseDex } from './models/base-dex';
+import { LiquidityPool } from './models/liquidity-pool';
+export type VyfinancePoolData = {
+    unitsPair: string;
+    poolValidatorUtxoAddress: string;
+    isPabPool: boolean;
+    'lpPolicyId-assetId': string;
+    json: string;
+    pair: string;
+    isLive: boolean;
+    orderValidatorUtxoAddress: string;
+    poolNftPolicyId: string;
+};
+export declare class Vyfinance extends BaseDex {
+    static readonly identifier: string;
+    /**
+     * On-Chain constants.
+     */
+    readonly cancelDatum: string;
+    readonly orderScript: {
+        type: string;
+        script: string;
+    };
+    constructor(kupoApi: KupoApi);
+    allLiquidityPoolDatas(): Promise<VyfinancePoolData[]>;
+    allLiquidityPools(): Promise<LiquidityPool[]>;
+    liquidityPoolFromUtxo(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
+    liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
+    liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
+    liquidityPoolsFromToken(tokenB: string, tokenA: string | undefined, filePath: string): Promise<Array<LiquidityPool> | undefined>;
+}

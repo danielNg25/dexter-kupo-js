@@ -213,6 +213,6 @@ export class Vyfinance extends BaseDex {
             )
         );
 
-        return pools.filter((pool) => pool !== undefined);
+        return pools.filter((pool) => pool !== undefined) as LiquidityPool[];
     }
 }

@@ -1,7 +1,4 @@
 node_modules
-build
 coverage
 
 .env
-request_log
-logs
