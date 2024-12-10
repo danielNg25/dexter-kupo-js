@@ -1,12 +1,11 @@
 import { DatumParameterKey } from '../constants';
+import { DatumParameters, DefinitionField } from '../types';
 declare const _default: {
     constructor: number;
-    fields: ({
+    fields: (((field: DefinitionField, parameters: DatumParameters, shouldExtract?: boolean) => void) | {
         bytes: DatumParameterKey;
         list?: undefined;
         int?: undefined;
-        constructor?: undefined;
-        fields?: undefined;
     } | {
         list: {
             list: {
@@ -15,20 +14,10 @@ declare const _default: {
         }[];
         bytes?: undefined;
         int?: undefined;
-        constructor?: undefined;
-        fields?: undefined;
     } | {
         int: DatumParameterKey;
         bytes?: undefined;
         list?: undefined;
-        constructor?: undefined;
-        fields?: undefined;
-    } | {
-        constructor: number;
-        fields: never[];
-        bytes?: undefined;
-        list?: undefined;
-        int?: undefined;
     })[];
 };
 export default _default;

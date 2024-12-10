@@ -7,9 +7,10 @@ const main = async () => {
     const minswap = new SundaeSwapV3(kupo);
     const start = new Date().getTime();
     minswap
-        .liquidityPoolsFromToken('a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235484f534b59')
+        .liquidityPoolsFromToken('533bb94a8850ee3ccbe483106489399112b74c905342cb1792a797a0494e4459')
         .then((values) => {
         const end = new Date().getTime();
+        console.log(values?.length);
         console.log(`Execution time: ${(end - start) / 1000}s`);
     });
     const blockfrost = new BlockFrostAPI({

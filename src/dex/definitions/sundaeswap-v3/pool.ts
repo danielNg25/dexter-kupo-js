@@ -40,9 +40,12 @@ export default {
         {
             int: DatumParameterKey.FinalFee,
         },
-        {
-            constructor: 1,
-            fields: [],
+        (
+            field: DefinitionField,
+            parameters: DatumParameters,
+            shouldExtract: boolean = true
+        ) => {
+            return;
         },
         {
             int: DatumParameterKey.Unknown,
