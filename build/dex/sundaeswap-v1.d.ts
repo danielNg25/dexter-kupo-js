@@ -3,7 +3,7 @@ import { UTXO } from '../types';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 export declare class SundaeSwapV1 extends BaseDex {
-    static readonly identifier: string;
+    readonly identifier: string;
     /**
      * On-Chain constants.
      */

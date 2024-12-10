@@ -9,12 +9,14 @@ const MIN_POOL_ADA = 3000000n;
 export class WingRiders extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
+        this.identifier = DEX_IDENTIFIERS.WINGRIDER;
         /**
          * On-Chain constants.
          */
         this.orderAddress = 'addr1wxr2a8htmzuhj39y2gq7ftkpxv98y2g67tg8zezthgq4jkg0a4ul4';
         this.poolValidityPolicy = '026a18d04a0c642759bb3d83b12e3344894e5c1c7b2aeb1a2113a570';
         this.poolValidityAssetIden = '026a18d04a0c642759bb3d83b12e3344894e5c1c7b2aeb1a2113a570.4c';
+        this.poolValidityAssetIdenCheck = '026a18d04a0c642759bb3d83b12e3344894e5c1c7b2aeb1a2113a5704c';
         this.cancelDatum = 'd87a80';
         this.orderScript = {
             type: 'PlutusV1',
@@ -46,6 +48,9 @@ export class WingRiders extends BaseDex {
         if (relevantAssets.length < 2) {
             return Promise.resolve(undefined);
         }
+        poolId =
+            utxo.amount.find((amount) => amount.unit.startsWith(this.poolValidityPolicy) &&
+                amount.unit !== this.poolValidityAssetIdenCheck)?.unit || poolId;
         // Could be ADA/X or X/X pool
         const assetAIndex = relevantAssets.length === 2 ? 0 : 1;
         const assetBIndex = relevantAssets.length === 2 ? 1 : 2;
@@ -115,4 +120,3 @@ export class WingRiders extends BaseDex {
         }))).filter((pool) => pool !== undefined);
     }
 }
-WingRiders.identifier = DEX_IDENTIFIERS.WINGRIDER;

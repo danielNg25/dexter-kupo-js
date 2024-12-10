@@ -1,12 +1,18 @@
 import { KupoApi } from '../KupoApi';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import {
+    compareTokenWithPolicy,
+    identifierToAsset,
+    joinPolicyId,
+    LOVELACE,
+    splitPolicyId,
+} from '../utils';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 
 export class Minswap extends BaseDex {
-    public static readonly identifier: string = DEX_IDENTIFIERS.MINSWAP;
+    public readonly identifier: string = DEX_IDENTIFIERS.MINSWAP;
 
     /**
      * On-Chain constants.
@@ -21,6 +27,8 @@ export class Minswap extends BaseDex {
         '0be55d262b29f564998ff81efe21bdc0022621c12f15af08d0f2ddb1';
     public readonly poolValidityAsset: string =
         '13aa2accf2e1561723aa26871e071fdf32c867cff7e7d50ad470d62f.4d494e53574150';
+    public readonly poolValidityAssetJoined: string =
+        '13aa2accf2e1561723aa26871e071fdf32c867cff7e7d50ad470d62f4d494e53574150';
     public readonly cancelDatum: string = 'd87a80';
     public readonly orderScript = {
         type: 'PlutusV1',
@@ -60,7 +68,7 @@ export class Minswap extends BaseDex {
                 const assetBalanceId: string = assetBalance.unit;
 
                 return (
-                    assetBalanceId !== this.poolValidityAsset &&
+                    assetBalanceId !== this.poolValidityAssetJoined &&
                     !assetBalanceId.startsWith(this.lpTokenPolicyId) &&
                     !assetBalanceId.startsWith(this.poolNftPolicyId)
                 );
@@ -71,6 +79,11 @@ export class Minswap extends BaseDex {
         if (relevantAssets.length < 2) {
             return Promise.resolve(undefined);
         }
+
+        poolId =
+            utxo.amount.find((amount) =>
+                amount.unit.startsWith(this.poolNftPolicyId)
+            )?.unit || poolId;
 
         // Could be ADA/X or X/X pool
         const assetAIndex: number = relevantAssets.length === 2 ? 0 : 1;
@@ -100,8 +113,12 @@ export class Minswap extends BaseDex {
     async liquidityPoolFromPoolId(
         poolId: string
     ): Promise<LiquidityPool | undefined> {
-        const nft = `${this.poolNftPolicyId}.${poolId}`;
-        const utxos = await this.kupoApi.get(nft, true);
+        if (!poolId.startsWith(this.poolNftPolicyId)) {
+            poolId = `${this.poolNftPolicyId}.${poolId}`;
+        }
+        poolId = splitPolicyId(joinPolicyId(poolId));
+
+        const utxos = await this.kupoApi.get(poolId, true);
 
         if (utxos.length === 0) {
             return Promise.resolve(undefined);

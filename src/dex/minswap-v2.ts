@@ -10,7 +10,7 @@ import { DatumParameters, DefinitionConstr } from './definitions/types';
 import { cborToDatumJson } from './definitions/utils';
 
 export class MinswapV2 extends BaseDex {
-    public static readonly identifier: string = DEX_IDENTIFIERS.MINSWAPV2;
+    public readonly identifier: string = DEX_IDENTIFIERS.MINSWAPV2;
 
     /**
      * On-Chain constants.
@@ -79,6 +79,13 @@ export class MinswapV2 extends BaseDex {
         const assetAIndex: number = relevantAssets.length === 2 ? 0 : 1;
         const assetBIndex: number = relevantAssets.length === 2 ? 1 : 2;
 
+        poolId =
+            utxo.amount.find(
+                (amount) =>
+                    amount.unit.startsWith(this.lpTokenPolicyId) &&
+                    amount.unit !== this.poolValidityAsset
+            )?.unit || poolId;
+
         const liquidityPool: LiquidityPool = new LiquidityPool(
             this,
             identifierToAsset(relevantAssets[assetAIndex].unit),
@@ -111,8 +118,28 @@ export class MinswapV2 extends BaseDex {
         const parameters: DatumParameters = builder.pullParameters(
             jsonDatum as DefinitionConstr
         );
+        // Ignore Zap orders
+        if (
+            typeof parameters.PoolAssetBPolicyId === 'string' &&
+            parameters.PoolAssetBPolicyId === this.lpTokenPolicyId
+        ) {
+            return undefined;
+        }
 
         liquidityPool.poolFeePercent = Number(parameters.BaseFee) / 100;
+        if (
+            compareTokenWithPolicy(
+                liquidityPool.assetA,
+                String(parameters.PoolAssetAPolicyId!) +
+                    String(parameters.PoolAssetAAssetName!)
+            )
+        ) {
+            liquidityPool.reserveA = BigInt(parameters.ReserveA!);
+            liquidityPool.reserveB = BigInt(parameters.ReserveB!);
+        } else {
+            liquidityPool.reserveA = BigInt(parameters.ReserveB!);
+            liquidityPool.reserveB = BigInt(parameters.ReserveA!);
+        }
 
         return liquidityPool;
     }

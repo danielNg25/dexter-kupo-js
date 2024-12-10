@@ -11,7 +11,7 @@ import { DEX_IDENTIFIERS } from './utils';
 const MIN_POOL_ADA: bigint = 3_000_000n;
 
 export class WingRidersV2 extends BaseDex {
-    public static readonly identifier: string = DEX_IDENTIFIERS.WINGRIDER;
+    public readonly identifier: string = DEX_IDENTIFIERS.WINGRIDER;
 
     /**
      * On-Chain constants.
@@ -22,6 +22,8 @@ export class WingRidersV2 extends BaseDex {
         '6fdc63a1d71dc2c65502b79baae7fb543185702b12c3c5fb639ed737';
     public readonly poolValidityAssetIden: string =
         '6fdc63a1d71dc2c65502b79baae7fb543185702b12c3c5fb639ed737.4c';
+    public readonly poolValidityAssetIdenCheck: string =
+        '6fdc63a1d71dc2c65502b79baae7fb543185702b12c3c5fb639ed7374c';
     public readonly cancelDatum: string = 'd87a80';
     public readonly orderScript = {
         type: 'PlutusV2',
@@ -68,6 +70,13 @@ export class WingRidersV2 extends BaseDex {
         if (relevantAssets.length < 2) {
             return Promise.resolve(undefined);
         }
+
+        poolId =
+            utxo.amount.find(
+                (amount) =>
+                    amount.unit.startsWith(this.poolValidityPolicy) &&
+                    amount.unit !== this.poolValidityAssetIdenCheck
+            )?.unit || poolId;
 
         // Could be ADA/X or X/X pool
         const assetAIndex: number = relevantAssets.length === 2 ? 0 : 1;
@@ -133,7 +142,15 @@ export class WingRidersV2 extends BaseDex {
         let ProtocolFee = parameters.ProtocolFee
             ? Number(parameters.ProtocolFee)
             : 0;
-        liquidityPool.poolFeePercent = (SwapFee + ProtocolFee) / 100;
+        let ProjectFeeInBasis = parameters.ProjectFeeInBasis
+            ? Number(parameters.ProjectFeeInBasis)
+            : 0;
+        let ReserveFeeInBasis = parameters.ReserveFeeInBasis
+            ? Number(parameters.ReserveFeeInBasis)
+            : 0;
+        liquidityPool.poolFeePercent =
+            (SwapFee + ProtocolFee + ProjectFeeInBasis + ReserveFeeInBasis) /
+            100;
 
         return liquidityPool;
     }

@@ -8,6 +8,7 @@ import { cborToDatumJson } from './definitions/utils';
 export class MinswapV2 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
+        this.identifier = DEX_IDENTIFIERS.MINSWAPV2;
         /**
          * On-Chain constants.
          */
@@ -51,6 +52,9 @@ export class MinswapV2 extends BaseDex {
         // Could be ADA/X or X/X pool
         const assetAIndex = relevantAssets.length === 2 ? 0 : 1;
         const assetBIndex = relevantAssets.length === 2 ? 1 : 2;
+        poolId =
+            utxo.amount.find((amount) => amount.unit.startsWith(this.lpTokenPolicyId) &&
+                amount.unit !== this.poolValidityAsset)?.unit || poolId;
         const liquidityPool = new LiquidityPool(this, identifierToAsset(relevantAssets[assetAIndex].unit), identifierToAsset(relevantAssets[assetBIndex].unit), BigInt(relevantAssets[assetAIndex].quantity), BigInt(relevantAssets[assetBIndex].quantity), utxo.address, 0.3, poolId);
         return liquidityPool;
     }
@@ -63,7 +67,21 @@ export class MinswapV2 extends BaseDex {
         let jsonDatum = cborToDatumJson(datum);
         const builder = await new DefinitionBuilder().loadDefinition(pool);
         const parameters = builder.pullParameters(jsonDatum);
+        // Ignore Zap orders
+        if (typeof parameters.PoolAssetBPolicyId === 'string' &&
+            parameters.PoolAssetBPolicyId === this.lpTokenPolicyId) {
+            return undefined;
+        }
         liquidityPool.poolFeePercent = Number(parameters.BaseFee) / 100;
+        if (compareTokenWithPolicy(liquidityPool.assetA, String(parameters.PoolAssetAPolicyId) +
+            String(parameters.PoolAssetAAssetName))) {
+            liquidityPool.reserveA = BigInt(parameters.ReserveA);
+            liquidityPool.reserveB = BigInt(parameters.ReserveB);
+        }
+        else {
+            liquidityPool.reserveA = BigInt(parameters.ReserveB);
+            liquidityPool.reserveB = BigInt(parameters.ReserveA);
+        }
         return liquidityPool;
     }
     async liquidityPoolFromPoolId(poolId) {
@@ -98,4 +116,3 @@ export class MinswapV2 extends BaseDex {
         }))).filter((pool) => pool !== undefined);
     }
 }
-MinswapV2.identifier = DEX_IDENTIFIERS.MINSWAPV2;

@@ -10,7 +10,7 @@ import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 
 export class SundaeSwapV1 extends BaseDex {
-    public static readonly identifier: string = DEX_IDENTIFIERS.SUNDAESWAPV1;
+    public readonly identifier: string = DEX_IDENTIFIERS.SUNDAESWAPV1;
 
     /**
      * On-Chain constants.

@@ -49,7 +49,7 @@ function writeVyfinanceDataToFile(
 }
 
 export class Vyfinance extends BaseDex {
-    public static readonly identifier: string = DEX_IDENTIFIERS.VYFINANCE;
+    public readonly identifier: string = DEX_IDENTIFIERS.VYFINANCE;
 
     /**
      * On-Chain constants.

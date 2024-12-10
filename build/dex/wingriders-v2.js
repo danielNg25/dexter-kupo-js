@@ -9,12 +9,14 @@ const MIN_POOL_ADA = 3000000n;
 export class WingRidersV2 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
+        this.identifier = DEX_IDENTIFIERS.WINGRIDER;
         /**
          * On-Chain constants.
          */
         this.orderAddress = 'addr1w8qnfkpe5e99m7umz4vxnmelxs5qw5dxytmfjk964rla98q605wte';
         this.poolValidityPolicy = '6fdc63a1d71dc2c65502b79baae7fb543185702b12c3c5fb639ed737';
         this.poolValidityAssetIden = '6fdc63a1d71dc2c65502b79baae7fb543185702b12c3c5fb639ed737.4c';
+        this.poolValidityAssetIdenCheck = '6fdc63a1d71dc2c65502b79baae7fb543185702b12c3c5fb639ed7374c';
         this.cancelDatum = 'd87a80';
         this.orderScript = {
             type: 'PlutusV2',
@@ -46,6 +48,9 @@ export class WingRidersV2 extends BaseDex {
         if (relevantAssets.length < 2) {
             return Promise.resolve(undefined);
         }
+        poolId =
+            utxo.amount.find((amount) => amount.unit.startsWith(this.poolValidityPolicy) &&
+                amount.unit !== this.poolValidityAssetIdenCheck)?.unit || poolId;
         // Could be ADA/X or X/X pool
         const assetAIndex = relevantAssets.length === 2 ? 0 : 1;
         const assetBIndex = relevantAssets.length === 2 ? 1 : 2;
@@ -83,7 +88,15 @@ export class WingRidersV2 extends BaseDex {
         let ProtocolFee = parameters.ProtocolFee
             ? Number(parameters.ProtocolFee)
             : 0;
-        liquidityPool.poolFeePercent = (SwapFee + ProtocolFee) / 100;
+        let ProjectFeeInBasis = parameters.ProjectFeeInBasis
+            ? Number(parameters.ProjectFeeInBasis)
+            : 0;
+        let ReserveFeeInBasis = parameters.ReserveFeeInBasis
+            ? Number(parameters.ReserveFeeInBasis)
+            : 0;
+        liquidityPool.poolFeePercent =
+            (SwapFee + ProtocolFee + ProjectFeeInBasis + ReserveFeeInBasis) /
+                100;
         return liquidityPool;
     }
     async liquidityPoolFromPoolId(poolId) {
@@ -118,4 +131,3 @@ export class WingRidersV2 extends BaseDex {
         }))).filter((pool) => pool !== undefined);
     }
 }
-WingRidersV2.identifier = DEX_IDENTIFIERS.WINGRIDER;

@@ -8,6 +8,7 @@ import { DEX_IDENTIFIERS } from './utils';
 export class SundaeSwapV3 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
+        this.identifier = DEX_IDENTIFIERS.SUNDAESWAPV3;
         /**
          * On-Chain constants.
          */
@@ -105,4 +106,3 @@ export class SundaeSwapV3 extends BaseDex {
         }))).filter((pool) => pool !== undefined);
     }
 }
-SundaeSwapV3.identifier = DEX_IDENTIFIERS.SUNDAESWAPV3;

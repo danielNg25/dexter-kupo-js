@@ -3,7 +3,7 @@ import { UTXO } from '../types';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 export declare class Minswap extends BaseDex {
-    static readonly identifier: string;
+    readonly identifier: string;
     /**
      * On-Chain constants.
      */
@@ -12,6 +12,7 @@ export declare class Minswap extends BaseDex {
     readonly lpTokenPolicyId: string;
     readonly poolNftPolicyId: string;
     readonly poolValidityAsset: string;
+    readonly poolValidityAssetJoined: string;
     readonly cancelDatum: string;
     readonly orderScript: {
         type: string;

@@ -26,6 +26,7 @@ function writeVyfinanceDataToFile(data, filePath) {
 export class Vyfinance extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
+        this.identifier = DEX_IDENTIFIERS.VYFINANCE;
         /**
          * On-Chain constants.
          */
@@ -130,4 +131,3 @@ export class Vyfinance extends BaseDex {
         return pools.filter((pool) => pool !== undefined);
     }
 }
-Vyfinance.identifier = DEX_IDENTIFIERS.VYFINANCE;

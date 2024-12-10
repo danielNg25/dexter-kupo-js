@@ -14,7 +14,7 @@ export type VyfinancePoolData = {
     poolNftPolicyId: string;
 };
 export declare class Vyfinance extends BaseDex {
-    static readonly identifier: string;
+    readonly identifier: string;
     /**
      * On-Chain constants.
      */

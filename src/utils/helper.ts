@@ -5,6 +5,10 @@ export const joinPolicyId = (policyId: string) => {
     return policyId.split('.').join('');
 };
 
+export const splitPolicyId = (policyId: string) => {
+    return policyId.slice(0, 56) + '.' + policyId.slice(56);
+};
+
 export const isShellyAddress = (address: string): boolean => {
     return address.includes('addr1') || address.includes('stake1');
 };
@@ -21,7 +25,7 @@ export const identifierToAsset = (
 
 export const compareTokenWithPolicy = (a: Token, b: string): boolean => {
     if (typeof a === 'string') {
-        return a === b;
+        return a === b || (a == LOVELACE && b == '');
     }
 
     if (a instanceof Asset) {

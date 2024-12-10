@@ -3,13 +3,14 @@ import { UTXO } from '../types';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 export declare class WingRiders extends BaseDex {
-    static readonly identifier: string;
+    readonly identifier: string;
     /**
      * On-Chain constants.
      */
     readonly orderAddress: string;
     readonly poolValidityPolicy: string;
     readonly poolValidityAssetIden: string;
+    readonly poolValidityAssetIdenCheck: string;
     readonly cancelDatum: string;
     readonly orderScript: {
         type: string;

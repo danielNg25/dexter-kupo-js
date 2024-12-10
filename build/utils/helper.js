@@ -3,6 +3,9 @@ import { LOVELACE } from './constant';
 export const joinPolicyId = (policyId) => {
     return policyId.split('.').join('');
 };
+export const splitPolicyId = (policyId) => {
+    return policyId.slice(0, 56) + '.' + policyId.slice(56);
+};
 export const isShellyAddress = (address) => {
     return address.includes('addr1') || address.includes('stake1');
 };
@@ -14,7 +17,7 @@ export const identifierToAsset = (identifierToAsset, decimal = 0) => {
 };
 export const compareTokenWithPolicy = (a, b) => {
     if (typeof a === 'string') {
-        return a === b;
+        return a === b || (a == LOVELACE && b == '');
     }
     if (a instanceof Asset) {
         return a.identifier() === b || a.identifier('.') === b;

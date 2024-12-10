@@ -11,7 +11,7 @@ import { DEX_IDENTIFIERS } from './utils';
 const MIN_POOL_ADA: bigint = 3_000_000n;
 
 export class WingRiders extends BaseDex {
-    public static readonly identifier: string = DEX_IDENTIFIERS.WINGRIDER;
+    public readonly identifier: string = DEX_IDENTIFIERS.WINGRIDER;
 
     /**
      * On-Chain constants.
@@ -22,6 +22,8 @@ export class WingRiders extends BaseDex {
         '026a18d04a0c642759bb3d83b12e3344894e5c1c7b2aeb1a2113a570';
     public readonly poolValidityAssetIden: string =
         '026a18d04a0c642759bb3d83b12e3344894e5c1c7b2aeb1a2113a570.4c';
+    public readonly poolValidityAssetIdenCheck: string =
+        '026a18d04a0c642759bb3d83b12e3344894e5c1c7b2aeb1a2113a5704c';
     public readonly cancelDatum: string = 'd87a80';
     public readonly orderScript = {
         type: 'PlutusV1',
@@ -68,6 +70,13 @@ export class WingRiders extends BaseDex {
         if (relevantAssets.length < 2) {
             return Promise.resolve(undefined);
         }
+
+        poolId =
+            utxo.amount.find(
+                (amount) =>
+                    amount.unit.startsWith(this.poolValidityPolicy) &&
+                    amount.unit !== this.poolValidityAssetIdenCheck
+            )?.unit || poolId;
 
         // Could be ADA/X or X/X pool
         const assetAIndex: number = relevantAssets.length === 2 ? 0 : 1;
