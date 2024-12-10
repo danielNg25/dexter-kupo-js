@@ -25,12 +25,12 @@ import { compareTokenWithPolicy, fetchAssetMetadata } from './utils';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
 
-    const minswap = new SundaeSwapV3(kupo);
+    const minswap = new WingRidersV2(kupo);
 
     const start = new Date().getTime();
     minswap
         .liquidityPoolsFromToken(
-            '533bb94a8850ee3ccbe483106489399112b74c905342cb1792a797a0494e4459'
+            '8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344'
         )
         .then((values) => {
             const end = new Date().getTime();

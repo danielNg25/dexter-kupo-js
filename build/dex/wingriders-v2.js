@@ -1,6 +1,7 @@
 import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/wingriders-v2/pool';
+import stable_pool from './definitions/wingriders-v2/stable-pool';
 import { cborToDatumJson } from './definitions/utils';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
@@ -9,7 +10,7 @@ const MIN_POOL_ADA = 3000000n;
 export class WingRidersV2 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
-        this.identifier = DEX_IDENTIFIERS.WINGRIDER;
+        this.identifier = DEX_IDENTIFIERS.WINGRIDERV2;
         /**
          * On-Chain constants.
          */
@@ -74,8 +75,18 @@ export class WingRidersV2 extends BaseDex {
         }
         const datum = await this.kupoApi.datum(utxo.data_hash);
         let jsonDatum = cborToDatumJson(datum);
+        let parameters;
+        try {
+            // Change this if want to have stable pool
+            const builder = await new DefinitionBuilder().loadDefinition(stable_pool);
+            parameters = builder.pullParameters(jsonDatum);
+            if (parameters.WingRidersV2Special) {
+                return undefined;
+            }
+        }
+        catch { }
         const builder = await new DefinitionBuilder().loadDefinition(pool);
-        const parameters = builder.pullParameters(jsonDatum);
+        parameters = builder.pullParameters(jsonDatum);
         liquidityPool.reserveA =
             typeof parameters.PoolAssetATreasury === 'number'
                 ? liquidityPool.reserveA - BigInt(parameters.PoolAssetATreasury)

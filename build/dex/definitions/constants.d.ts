@@ -13,6 +13,7 @@ export declare enum DatumParameterKey {
     CancelDatum = "CancelDatum",
     AScale = "AScale",
     BScale = "BScale",
+    WingRidersV2Special = "WingRidersV2Special",
     /**
      * Swap/wallet info.
      */

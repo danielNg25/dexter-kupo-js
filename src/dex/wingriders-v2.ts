@@ -3,6 +3,7 @@ import { Unit, UTXO } from '../types';
 import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/wingriders-v2/pool';
+import stable_pool from './definitions/wingriders-v2/stable-pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
 import { cborToDatumJson } from './definitions/utils';
 import { BaseDex } from './models/base-dex';
@@ -11,7 +12,7 @@ import { DEX_IDENTIFIERS } from './utils';
 const MIN_POOL_ADA: bigint = 3_000_000n;
 
 export class WingRidersV2 extends BaseDex {
-    public readonly identifier: string = DEX_IDENTIFIERS.WINGRIDER;
+    public readonly identifier: string = DEX_IDENTIFIERS.WINGRIDERV2;
 
     /**
      * On-Chain constants.
@@ -122,12 +123,21 @@ export class WingRidersV2 extends BaseDex {
         const datum = await this.kupoApi.datum(utxo.data_hash!);
         let jsonDatum = cborToDatumJson(datum);
 
+        let parameters: DatumParameters;
+        try {
+            // Change this if want to have stable pool
+            const builder: DefinitionBuilder =
+                await new DefinitionBuilder().loadDefinition(stable_pool);
+            parameters = builder.pullParameters(jsonDatum as DefinitionConstr);
+            if (parameters.WingRidersV2Special) {
+                return undefined;
+            }
+        } catch {}
+
         const builder: DefinitionBuilder =
             await new DefinitionBuilder().loadDefinition(pool);
 
-        const parameters: DatumParameters = builder.pullParameters(
-            jsonDatum as DefinitionConstr
-        );
+        parameters = builder.pullParameters(jsonDatum as DefinitionConstr);
 
         liquidityPool.reserveA =
             typeof parameters.PoolAssetATreasury === 'number'

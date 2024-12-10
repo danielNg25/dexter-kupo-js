@@ -15,6 +15,7 @@ export var DatumParameterKey;
     DatumParameterKey["CancelDatum"] = "CancelDatum";
     DatumParameterKey["AScale"] = "AScale";
     DatumParameterKey["BScale"] = "BScale";
+    DatumParameterKey["WingRidersV2Special"] = "WingRidersV2Special";
     /**
      * Swap/wallet info.
      */
