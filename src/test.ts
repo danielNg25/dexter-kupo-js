@@ -20,24 +20,30 @@ import pool from './dex/definitions/minswap-v2/pool';
 import { WingRiders } from './dex/wingriders';
 import { WingRidersV2 } from './dex/wingriders-v2';
 import { Asset } from './models';
-import { compareTokenWithPolicy } from './utils';
+import { compareTokenWithPolicy, fetchAssetMetadata } from './utils';
 
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
 
-    const minswap = new MinswapV2(kupo);
+    // const minswap = new MinswapV2(kupo);
 
-    // console.log(await minswap.allLiquidityPoolDatas());
-    const start = new Date().getTime();
-    minswap
-        .liquidityPoolsFromToken(
-            'f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069534f4c'
+    // // console.log(await minswap.allLiquidityPoolDatas());
+    // const start = new Date().getTime();
+    // minswap
+    //     .liquidityPoolsFromToken(
+    //         'f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069534f4c'
+    //     )
+    //     .then((values) => {
+    //         console.log(values);
+    //         const end = new Date().getTime();
+    //         console.log(`Execution time: ${(end - start) / 1000}s`);
+    //     });
+
+    console.log(
+        await fetchAssetMetadata(
+            '279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f534e454b'
         )
-        .then((values) => {
-            console.log(values);
-            const end = new Date().getTime();
-            console.log(`Execution time: ${(end - start) / 1000}s`);
-        });
+    );
 
     const blockfrost = new BlockFrostAPI({
         network: 'mainnet',
