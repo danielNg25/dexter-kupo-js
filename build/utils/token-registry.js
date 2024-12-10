@@ -15,7 +15,7 @@ import fetch from 'node-fetch';
 export const fetchAssetMetadata = async (asset, tokenRegistryUrl = CONFIG_TOKEN_REGISTRY_URL, timeout = 10_000 // timeout in milliseconds
 ) => {
     try {
-        const url = `${tokenRegistryUrl}/metadata/${joinPolicyId(asset)}`;
+        const url = `${tokenRegistryUrl}metadata/${joinPolicyId(asset)}`;
         // Create an AbortController to handle the timeout
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -33,6 +33,9 @@ export const fetchAssetMetadata = async (asset, tokenRegistryUrl = CONFIG_TOKEN_
             else {
                 throw new Error(`Failed to fetch metadata: ${response.statusText}`);
             }
+        }
+        else if (!response.ok) {
+            throw new Error(`Failed to fetch metadata: ${response.statusText}`);
         }
         const data = (await response.json());
         if (data?.name !== undefined && data?.description !== undefined) {

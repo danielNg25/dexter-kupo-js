@@ -43,7 +43,7 @@ export const fetchAssetMetadata = async (
     timeout = 10_000 // timeout in milliseconds
 ) => {
     try {
-        const url = `${tokenRegistryUrl}/metadata/${joinPolicyId(asset)}`;
+        const url = `${tokenRegistryUrl}metadata/${joinPolicyId(asset)}`;
 
         // Create an AbortController to handle the timeout
         const controller = new AbortController();
@@ -66,6 +66,8 @@ export const fetchAssetMetadata = async (
                     `Failed to fetch metadata: ${response.statusText}`
                 );
             }
+        } else if (!response.ok) {
+            throw new Error(`Failed to fetch metadata: ${response.statusText}`);
         }
 
         const data = (await response.json()) as TokenRegistryMetadata;
