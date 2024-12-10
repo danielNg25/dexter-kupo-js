@@ -76,6 +76,7 @@ export enum DatumParameterKey {
     RequestScriptHash = 'RequestScriptHash',
     StakeAdminPolicy = 'StakeAdminPolicy',
     LqBound = 'LqBound',
+    LovelaceDeduction = 'LovelaceDeduction',
 
     Unknown = 'Unknown',
 }

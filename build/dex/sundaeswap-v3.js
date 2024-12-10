@@ -72,6 +72,15 @@ export class SundaeSwapV3 extends BaseDex {
                 typeof parameters.FinalFee === 'number'
                 ? Number(parameters.FinalFee) / 100
                 : 0;
+        if (parameters.LovelaceDeduction) {
+            const deduction = BigInt(parameters.LovelaceDeduction);
+            if (compareTokenWithPolicy(liquidityPool.assetA, LOVELACE)) {
+                liquidityPool.reserveA -= deduction;
+            }
+            else if (compareTokenWithPolicy(liquidityPool.assetB, LOVELACE)) {
+                liquidityPool.reserveB -= deduction;
+            }
+        }
         return liquidityPool;
     }
     async liquidityPoolFromPoolId(poolId) {

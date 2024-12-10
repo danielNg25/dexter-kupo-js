@@ -72,6 +72,7 @@ export declare enum DatumParameterKey {
     RequestScriptHash = "RequestScriptHash",
     StakeAdminPolicy = "StakeAdminPolicy",
     LqBound = "LqBound",
+    LovelaceDeduction = "LovelaceDeduction",
     Unknown = "Unknown"
 }
 export declare enum TransactionStatus {

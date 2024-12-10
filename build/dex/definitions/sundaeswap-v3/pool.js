@@ -38,8 +38,15 @@ export default {
         {
             int: DatumParameterKey.FinalFee,
         },
-        (field, parameters, shouldExtract = true) => {
-            return;
+        {
+            constructor: 1,
+            fields: [],
+        },
+        {
+            int: DatumParameterKey.Unknown,
+        },
+        {
+            int: DatumParameterKey.LovelaceDeduction,
         },
     ],
 };

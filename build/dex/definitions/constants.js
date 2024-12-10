@@ -74,6 +74,7 @@ export var DatumParameterKey;
     DatumParameterKey["RequestScriptHash"] = "RequestScriptHash";
     DatumParameterKey["StakeAdminPolicy"] = "StakeAdminPolicy";
     DatumParameterKey["LqBound"] = "LqBound";
+    DatumParameterKey["LovelaceDeduction"] = "LovelaceDeduction";
     DatumParameterKey["Unknown"] = "Unknown";
 })(DatumParameterKey || (DatumParameterKey = {}));
 export var TransactionStatus;

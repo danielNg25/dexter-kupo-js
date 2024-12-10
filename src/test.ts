@@ -25,25 +25,17 @@ import { compareTokenWithPolicy, fetchAssetMetadata } from './utils';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
 
-    const minswap = new MinswapV2(kupo);
+    const minswap = new SundaeSwapV3(kupo);
 
-    // console.log(await minswap.allLiquidityPoolDatas());
-    // const start = new Date().getTime();
-    // minswap
-    //     .liquidityPoolsFromToken(
-    //         '25c5de5f5b286073c593edfd77b48abc7a48e5a4f3d4cd9d428ff93555534454',
-    //     )
-    //     .then((values) => {
-    //         console.log(values);
-    //         const end = new Date().getTime();
-    //         console.log(`Execution time: ${(end - start) / 1000}s`);
-    //     });
-
-    console.log(
-        await fetchAssetMetadata(
-            '64f7b108bd43f4bde344b82587655eeb821256c0c8e79ad48db15d1844454449'
+    const start = new Date().getTime();
+    minswap
+        .liquidityPoolsFromToken(
+            'a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235484f534b59'
         )
-    );
+        .then((values) => {
+            const end = new Date().getTime();
+            console.log(`Execution time: ${(end - start) / 1000}s`);
+        });
 
     const blockfrost = new BlockFrostAPI({
         network: 'mainnet',
