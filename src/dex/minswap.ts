@@ -130,6 +130,8 @@ export class Minswap extends BaseDex {
     async liquidityPoolsFromToken(
         tokenB: string,
         tokenA: string = LOVELACE,
+        tokenBDecimals: number = 0,
+        tokenADecimals: number = 6,
         allLiquidityPools: LiquidityPool[] = []
     ): Promise<Array<LiquidityPool> | undefined> {
         allLiquidityPools =
@@ -151,10 +153,25 @@ export class Minswap extends BaseDex {
 
         return (
             await Promise.all(
-                pools.map(async (pool) => {
-                    return await this.liquidityPoolFromPoolId(pool.poolId);
-                })
+                pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))
             )
-        ).filter((pool) => pool !== undefined) as LiquidityPool[];
+        )
+            .filter((pool): pool is LiquidityPool => pool !== undefined) // Type guard for filtering
+            .map((pool) => {
+                const setDecimals = (
+                    asset: typeof pool.assetA | typeof pool.assetB
+                ) => {
+                    if (asset !== LOVELACE) {
+                        asset.decimals = compareTokenWithPolicy(asset, tokenA)
+                            ? tokenADecimals
+                            : tokenBDecimals;
+                    }
+                };
+
+                setDecimals(pool.assetA);
+                setDecimals(pool.assetB);
+
+                return pool;
+            });
     }
 }

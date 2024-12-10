@@ -13,5 +13,5 @@ export declare abstract class BaseDex {
      * Craft liquidity pool state from a pool id.
      */
     abstract liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
-    abstract liquidityPoolsFromToken(tokenB: string, tokenA: string, allLiquidityPools: any): Promise<Array<LiquidityPool> | undefined>;
+    abstract liquidityPoolsFromToken(tokenB: string, tokenA: string, tokenBDecimals: number, tokenADecimals: number, allLiquidityPools: any): Promise<Array<LiquidityPool> | undefined>;
 }

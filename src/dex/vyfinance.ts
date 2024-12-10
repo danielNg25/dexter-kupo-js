@@ -1,7 +1,7 @@
 import { KupoApi } from '../KupoApi';
 import { Asset } from '../models/asset';
 import { Unit, UTXO } from '../types';
-import { identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/vyfinance/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
@@ -172,6 +172,8 @@ export class Vyfinance extends BaseDex {
     async liquidityPoolsFromToken(
         tokenB: string,
         tokenA: string = LOVELACE,
+        tokenBDecimals: number = 0,
+        tokenADecimals: number = 6,
         filePath: string
     ): Promise<Array<LiquidityPool> | undefined> {
         tokenB = tokenB.split('.').join('');
@@ -221,6 +223,23 @@ export class Vyfinance extends BaseDex {
         );
 
         // Return filtered pools
-        return pools.filter((pool) => pool !== undefined) as LiquidityPool[];
+        return (
+            pools.filter((pool) => pool !== undefined) as LiquidityPool[]
+        ).map((pool) => {
+            const setDecimals = (
+                asset: typeof pool.assetA | typeof pool.assetB
+            ) => {
+                if (asset !== LOVELACE) {
+                    asset.decimals = compareTokenWithPolicy(asset, tokenA)
+                        ? tokenADecimals
+                        : tokenBDecimals;
+                }
+            };
+
+            setDecimals(pool.assetA);
+            setDecimals(pool.assetB);
+
+            return pool;
+        });
     }
 }

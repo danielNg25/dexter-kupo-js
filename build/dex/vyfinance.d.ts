@@ -29,5 +29,5 @@ export declare class Vyfinance extends BaseDex {
     liquidityPoolFromUtxo(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
-    liquidityPoolsFromToken(tokenB: string, tokenA: string | undefined, filePath: string): Promise<Array<LiquidityPool> | undefined>;
+    liquidityPoolsFromToken(tokenB: string, tokenA: string | undefined, tokenBDecimals: number | undefined, tokenADecimals: number | undefined, filePath: string): Promise<Array<LiquidityPool> | undefined>;
 }

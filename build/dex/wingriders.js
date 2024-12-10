@@ -101,7 +101,7 @@ export class WingRiders extends BaseDex {
         }
         return this.liquidityPoolFromUtxoExtend(foundUtxo, poolId);
     }
-    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, allLiquidityPools = []) {
+    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, allLiquidityPools = []) {
         allLiquidityPools =
             allLiquidityPools.length > 0
                 ? allLiquidityPools
@@ -115,8 +115,19 @@ export class WingRiders extends BaseDex {
         if (pools.length === 0) {
             return Promise.resolve(undefined);
         }
-        return (await Promise.all(pools.map(async (pool) => {
-            return await this.liquidityPoolFromPoolId(pool.poolId);
-        }))).filter((pool) => pool !== undefined);
+        return (await Promise.all(pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))))
+            .filter((pool) => pool !== undefined) // Type guard for filtering
+            .map((pool) => {
+            const setDecimals = (asset) => {
+                if (asset !== LOVELACE) {
+                    asset.decimals = compareTokenWithPolicy(asset, tokenA)
+                        ? tokenADecimals
+                        : tokenBDecimals;
+                }
+            };
+            setDecimals(pool.assetA);
+            setDecimals(pool.assetB);
+            return pool;
+        });
     }
 }

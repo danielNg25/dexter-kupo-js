@@ -1,5 +1,5 @@
 import { Asset } from '../models/asset';
-import { identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/vyfinance/pool';
 import { cborToDatumJson } from './definitions/utils';
@@ -96,7 +96,7 @@ export class Vyfinance extends BaseDex {
         }
         return this.liquidityPoolFromUtxoExtend(utxos[0], poolId);
     }
-    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, filePath) {
+    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, filePath) {
         tokenB = tokenB.split('.').join('');
         tokenA = tokenA.split('.').join('');
         // Ensure the file exists
@@ -128,6 +128,17 @@ export class Vyfinance extends BaseDex {
         // Fetch pools
         const pools = await Promise.all(poolDatas.map(async (poolData) => this.liquidityPoolFromPoolId(poolData.poolNftPolicyId)));
         // Return filtered pools
-        return pools.filter((pool) => pool !== undefined);
+        return pools.filter((pool) => pool !== undefined).map((pool) => {
+            const setDecimals = (asset) => {
+                if (asset !== LOVELACE) {
+                    asset.decimals = compareTokenWithPolicy(asset, tokenA)
+                        ? tokenADecimals
+                        : tokenBDecimals;
+                }
+            };
+            setDecimals(pool.assetA);
+            setDecimals(pool.assetB);
+            return pool;
+        });
     }
 }

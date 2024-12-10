@@ -27,6 +27,8 @@ export abstract class BaseDex {
     abstract liquidityPoolsFromToken(
         tokenB: string,
         tokenA: string,
+        tokenBDecimals: number,
+        tokenADecimals: number,
         allLiquidityPools: any
     ): Promise<Array<LiquidityPool> | undefined>;
 }
