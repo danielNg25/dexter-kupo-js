@@ -25,7 +25,7 @@ import { compareTokenWithPolicy, fetchAssetMetadata } from './utils';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
 
-    const minswap = new SundaeSwapV3(kupo);
+    const minswap = new SundaeSwapV1(kupo);
 
     const start = new Date().getTime();
     minswap
