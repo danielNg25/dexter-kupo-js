@@ -21,20 +21,21 @@ import { WingRiders } from './dex/wingriders';
 import { WingRidersV2 } from './dex/wingriders-v2';
 import { Asset } from './models';
 import { compareTokenWithPolicy, fetchAssetMetadata } from './utils';
+import { Muesliswap } from './dex/muesliswap';
 
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
 
-    const minswap = new WingRidersV2(kupo);
+    const minswap = new Muesliswap(kupo);
 
     const start = new Date().getTime();
     minswap
         .liquidityPoolsFromToken(
-            '8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344'
+            'afbe91c0b44b3040e360057bf8354ead8c49c4979ae6ab7c4fbdc9eb4d494c4b7632'
         )
         .then((values) => {
             const end = new Date().getTime();
-            console.log(values?.length);
+            console.log(values);
             console.log(`Execution time: ${(end - start) / 1000}s`);
         });
 
@@ -48,6 +49,15 @@ const main = async () => {
     //         '3a6183bcd0d75208d5aeaac5fd814951c575e4e6bb66fc0670b4f8dd1c30eef9'
     //     )).json_value
     // );
+
+    fs.writeFileSync(
+        'file.json',
+        JSON.stringify(
+            cborToDatumJson(
+                'd8799fa200a001a140a1401a0e692d209fd8799f581c420000029ad9527271b1b1e3c27ee065c18df70a4a4cfc3093a41a444341584fffd8799f4040ffffd8799f581c5509b8063193f292f2b922375ea4d58799534f053f4932f0e6b313da46796165504c56ffa347656e6444617465d905009f1b000003bbcc68f818ff457072696365d87b9fd8799f1a000186a0184dffff49737461727444617465d905009f1b00000093933c5c18ffa0ff'
+            )
+        )
+    );
 };
 
 main();

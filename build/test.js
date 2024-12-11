@@ -1,16 +1,18 @@
 import { KupoApi } from './KupoApi';
 import { BlockFrostAPI } from '@blockfrost/blockfrost-js';
+import * as fs from 'fs';
 const url = 'https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/matches/addr1qyzk2jnlyklmcpjlaqt8r73uqmdkmq8jdl83uvgf6crnnqcjtcz8hchkwxt6s9afm7eqzlx4y4v5r93sl6eph6k9f54s24cyg5';
-import { WingRidersV2 } from './dex/wingriders-v2';
+import { cborToDatumJson } from './dex/definitions/utils';
+import { Muesliswap } from './dex/muesliswap';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
-    const minswap = new WingRidersV2(kupo);
+    const minswap = new Muesliswap(kupo);
     const start = new Date().getTime();
     minswap
-        .liquidityPoolsFromToken('8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344')
+        .liquidityPoolsFromToken('afbe91c0b44b3040e360057bf8354ead8c49c4979ae6ab7c4fbdc9eb4d494c4b7632')
         .then((values) => {
         const end = new Date().getTime();
-        console.log(values?.length);
+        console.log(values);
         console.log(`Execution time: ${(end - start) / 1000}s`);
     });
     const blockfrost = new BlockFrostAPI({
@@ -22,5 +24,6 @@ const main = async () => {
     //         '3a6183bcd0d75208d5aeaac5fd814951c575e4e6bb66fc0670b4f8dd1c30eef9'
     //     )).json_value
     // );
+    fs.writeFileSync('file.json', JSON.stringify(cborToDatumJson('d8799fa200a001a140a1401a0e692d209fd8799f581c420000029ad9527271b1b1e3c27ee065c18df70a4a4cfc3093a41a444341584fffd8799f4040ffffd8799f581c5509b8063193f292f2b922375ea4d58799534f053f4932f0e6b313da46796165504c56ffa347656e6444617465d905009f1b000003bbcc68f818ff457072696365d87b9fd8799f1a000186a0184dffff49737461727444617465d905009f1b00000093933c5c18ffa0ff')));
 };
 main();
