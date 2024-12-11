@@ -1,6 +1,7 @@
 export * from './models';
 export * from './minswap';
 export * from './minswap-v2';
+export * from './muesliswap';
 export * from './sundaeswap-v1';
 export * from './sundaeswap-v3';
 export * from './vyfinance';
