@@ -117,7 +117,7 @@ export class WingRidersV2 extends BaseDex {
                     100;
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}`);
+            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}`);
             return undefined;
         }
         return liquidityPool;
