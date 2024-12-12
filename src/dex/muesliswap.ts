@@ -1,5 +1,5 @@
 import { KupoApi } from '../KupoApi';
-import { Asset, Token } from '../models';
+import { Asset, Token, tokenName } from '../models';
 import { Unit, UTXO } from '../types';
 import {
     compareTokenWithPolicy,
@@ -132,7 +132,9 @@ export class Muesliswap extends BaseDex {
                     : 0;
         } catch (e) {
             console.error(
-                `Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`
+                `Failed parsing datum for liquidity pool ${tokenName(
+                    liquidityPool.assetA
+                )}/${tokenName(liquidityPool.assetB)}`
             );
             return undefined;
         }

@@ -9,6 +9,7 @@ import { cborToDatumJson } from './definitions/utils';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
+import { tokenName } from '../models';
 const MIN_POOL_ADA: bigint = 3_000_000n;
 
 export class WingRidersV2 extends BaseDex {
@@ -171,7 +172,9 @@ export class WingRidersV2 extends BaseDex {
                 100;
         } catch (e) {
             console.error(
-                `Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`
+                `Failed parsing datum for liquidity pool ${tokenName(
+                    liquidityPool.assetA
+                )}/${tokenName(liquidityPool.assetB)}`
             );
             return undefined;
         }

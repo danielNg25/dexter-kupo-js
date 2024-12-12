@@ -5,6 +5,7 @@ import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 import pool from './definitions/minswap-v2/pool';
 import { cborToDatumJson } from './definitions/utils';
+import { tokenName } from '../models';
 export class MinswapV2 extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
@@ -85,7 +86,7 @@ export class MinswapV2 extends BaseDex {
             }
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`);
+            console.error(`Failed parsing datum for liquidity pool ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}`);
             return undefined;
         }
         return liquidityPool;

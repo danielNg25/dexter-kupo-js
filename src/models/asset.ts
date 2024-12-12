@@ -25,3 +25,7 @@ export class Asset {
 }
 
 export type Token = Asset | 'lovelace';
+
+export const tokenName = (token: Token): string => {
+    return token === 'lovelace' ? 'ADA' : token.assetName;
+};

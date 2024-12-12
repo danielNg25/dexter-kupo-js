@@ -15,3 +15,6 @@ export class Asset {
         return Buffer.from(this.nameHex, 'hex').toString();
     }
 }
+export const tokenName = (token) => {
+    return token === 'lovelace' ? 'ADA' : token.assetName;
+};

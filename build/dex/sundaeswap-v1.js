@@ -1,3 +1,4 @@
+import { tokenName } from '../models';
 import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/sundaeswap-v1/pool';
@@ -79,7 +80,7 @@ export class SundaeSwapV1 extends BaseDex {
                     : 0;
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`);
+            console.error(`Failed parsing datum for liquidity pool ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}`);
             return undefined;
         }
         return liquidityPool;

@@ -1,5 +1,5 @@
 import { KupoApi } from '../KupoApi';
-import { Asset } from '../models/asset';
+import { Asset, tokenName } from '../models/asset';
 import { Unit, UTXO } from '../types';
 import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
@@ -157,7 +157,9 @@ export class Vyfinance extends BaseDex {
                     : liquidityPool.reserveB;
         } catch (e) {
             console.error(
-                `Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`
+                `Failed parsing datum for liquidity pool ${tokenName(
+                    liquidityPool.assetA
+                )}/${tokenName(liquidityPool.assetB)}`
             );
             return undefined;
         }

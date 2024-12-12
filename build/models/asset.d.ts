@@ -8,3 +8,4 @@ export declare class Asset {
     get assetName(): string;
 }
 export type Token = Asset | 'lovelace';
+export declare const tokenName: (token: Token) => string;
