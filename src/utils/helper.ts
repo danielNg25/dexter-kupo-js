@@ -38,3 +38,23 @@ export const compareTokenWithPolicy = (a: Token, b: string): boolean => {
 export const removeTrailingSlash = (url: string): string => {
     return url.endsWith('/') ? url.slice(0, -1) : url;
 };
+
+export // Helper function for retrying
+async function retry<T>(
+    fn: () => Promise<T>,
+    retries: number = 5,
+    delay: number = 100
+): Promise<T> {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            return await fn(); // Attempt to execute the function
+        } catch (error) {
+            console.error(`Attempt ${attempt} failed:`, error);
+            if (attempt === retries) {
+                throw error; // Re-throw the error if the last attempt fails
+            }
+            await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
+        }
+    }
+    throw new Error('Exceeded maximum retries');
+}
