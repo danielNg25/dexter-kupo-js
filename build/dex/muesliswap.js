@@ -1,4 +1,4 @@
-import { compareTokenWithPolicy, identifierToAsset, joinPolicyId, LOVELACE, splitPolicyId } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, joinPolicyId, LOVELACE, splitPolicyId, } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/muesliswap/pool';
 import { cborToDatumJson } from './definitions/utils';
@@ -61,15 +61,21 @@ export class Muesliswap extends BaseDex {
         if (!liquidityPool) {
             return Promise.resolve(undefined);
         }
-        const datum = await this.kupoApi.datum(utxo.data_hash);
-        let jsonDatum = cborToDatumJson(datum);
-        const builder = await new DefinitionBuilder().loadDefinition(pool);
-        const parameters = builder.pullParameters(jsonDatum);
-        liquidityPool.poolFeePercent =
-            typeof parameters.LpFee === 'number' ||
-                typeof parameters.LpFee === 'string'
-                ? Number(parameters.LpFee) / 100
-                : 0;
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash);
+            let jsonDatum = cborToDatumJson(datum);
+            const builder = await new DefinitionBuilder().loadDefinition(pool);
+            const parameters = builder.pullParameters(jsonDatum);
+            liquidityPool.poolFeePercent =
+                typeof parameters.LpFee === 'number' ||
+                    typeof parameters.LpFee === 'string'
+                    ? Number(parameters.LpFee) / 100
+                    : 0;
+        }
+        catch (e) {
+            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`);
+            return undefined;
+        }
         return liquidityPool;
     }
     async liquidityPoolFromPoolId(poolId) {

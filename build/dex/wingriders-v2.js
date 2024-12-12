@@ -73,41 +73,52 @@ export class WingRidersV2 extends BaseDex {
         if (!liquidityPool) {
             return Promise.resolve(undefined);
         }
-        const datum = await this.kupoApi.datum(utxo.data_hash);
-        let jsonDatum = cborToDatumJson(datum);
-        let parameters;
         try {
-            // Change this if want to have stable pool
-            const builder = await new DefinitionBuilder().loadDefinition(stable_pool);
-            parameters = builder.pullParameters(jsonDatum);
-            if (parameters.WingRidersV2Special) {
-                return undefined;
+            const datum = await this.kupoApi.datum(utxo.data_hash);
+            let jsonDatum = cborToDatumJson(datum);
+            let parameters;
+            try {
+                // Change this if want to have stable pool
+                const builder = await new DefinitionBuilder().loadDefinition(stable_pool);
+                parameters = builder.pullParameters(jsonDatum);
+                if (parameters.WingRidersV2Special) {
+                    return undefined;
+                }
             }
+            catch { }
+            const builder = await new DefinitionBuilder().loadDefinition(pool);
+            parameters = builder.pullParameters(jsonDatum);
+            liquidityPool.reserveA =
+                typeof parameters.PoolAssetATreasury === 'number'
+                    ? liquidityPool.reserveA -
+                        BigInt(parameters.PoolAssetATreasury)
+                    : liquidityPool.reserveA;
+            liquidityPool.reserveB =
+                typeof parameters.PoolAssetBTreasury === 'number'
+                    ? liquidityPool.reserveB -
+                        BigInt(parameters.PoolAssetBTreasury)
+                    : liquidityPool.reserveB;
+            let SwapFee = parameters.SwapFee ? Number(parameters.SwapFee) : 0;
+            let ProtocolFee = parameters.ProtocolFee
+                ? Number(parameters.ProtocolFee)
+                : 0;
+            let ProjectFeeInBasis = parameters.ProjectFeeInBasis
+                ? Number(parameters.ProjectFeeInBasis)
+                : 0;
+            let ReserveFeeInBasis = parameters.ReserveFeeInBasis
+                ? Number(parameters.ReserveFeeInBasis)
+                : 0;
+            liquidityPool.poolFeePercent =
+                (SwapFee +
+                    ProtocolFee +
+                    ProjectFeeInBasis +
+                    ReserveFeeInBasis) /
+                    100;
         }
-        catch { }
-        const builder = await new DefinitionBuilder().loadDefinition(pool);
-        parameters = builder.pullParameters(jsonDatum);
-        liquidityPool.reserveA =
-            typeof parameters.PoolAssetATreasury === 'number'
-                ? liquidityPool.reserveA - BigInt(parameters.PoolAssetATreasury)
-                : liquidityPool.reserveA;
-        liquidityPool.reserveB =
-            typeof parameters.PoolAssetBTreasury === 'number'
-                ? liquidityPool.reserveB - BigInt(parameters.PoolAssetBTreasury)
-                : liquidityPool.reserveB;
-        let SwapFee = parameters.SwapFee ? Number(parameters.SwapFee) : 0;
-        let ProtocolFee = parameters.ProtocolFee
-            ? Number(parameters.ProtocolFee)
-            : 0;
-        let ProjectFeeInBasis = parameters.ProjectFeeInBasis
-            ? Number(parameters.ProjectFeeInBasis)
-            : 0;
-        let ReserveFeeInBasis = parameters.ReserveFeeInBasis
-            ? Number(parameters.ReserveFeeInBasis)
-            : 0;
-        liquidityPool.poolFeePercent =
-            (SwapFee + ProtocolFee + ProjectFeeInBasis + ReserveFeeInBasis) /
-                100;
+        catch (e) {
+            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`);
+            return undefined;
+        }
         return liquidityPool;
     }
     async liquidityPoolFromPoolId(poolId) {

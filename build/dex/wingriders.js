@@ -72,20 +72,28 @@ export class WingRiders extends BaseDex {
         if (!liquidityPool) {
             return Promise.resolve(undefined);
         }
-        const datum = await this.kupoApi.datum(utxo.data_hash);
-        let jsonDatum = cborToDatumJson(datum);
-        const builder = await new DefinitionBuilder().loadDefinition(pool);
-        const parameters = builder.pullParameters(jsonDatum);
-        liquidityPool.reserveA =
-            typeof parameters.PoolAssetATreasury === 'number' ||
-                typeof parameters.PoolAssetATreasury === 'string'
-                ? liquidityPool.reserveA - BigInt(parameters.PoolAssetATreasury)
-                : liquidityPool.reserveA;
-        liquidityPool.reserveB =
-            typeof parameters.PoolAssetBTreasury === 'number' ||
-                typeof parameters.PoolAssetBTreasury === 'string'
-                ? liquidityPool.reserveB - BigInt(parameters.PoolAssetBTreasury)
-                : liquidityPool.reserveB;
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash);
+            let jsonDatum = cborToDatumJson(datum);
+            const builder = await new DefinitionBuilder().loadDefinition(pool);
+            const parameters = builder.pullParameters(jsonDatum);
+            liquidityPool.reserveA =
+                typeof parameters.PoolAssetATreasury === 'number' ||
+                    typeof parameters.PoolAssetATreasury === 'string'
+                    ? liquidityPool.reserveA -
+                        BigInt(parameters.PoolAssetATreasury)
+                    : liquidityPool.reserveA;
+            liquidityPool.reserveB =
+                typeof parameters.PoolAssetBTreasury === 'number' ||
+                    typeof parameters.PoolAssetBTreasury === 'string'
+                    ? liquidityPool.reserveB -
+                        BigInt(parameters.PoolAssetBTreasury)
+                    : liquidityPool.reserveB;
+        }
+        catch (e) {
+            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`);
+            return undefined;
+        }
         return liquidityPool;
     }
     async liquidityPoolFromPoolId(poolId) {

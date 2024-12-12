@@ -109,36 +109,43 @@ export class MinswapV2 extends BaseDex {
             return Promise.resolve(undefined);
         }
 
-        const datum = await this.kupoApi.datum(utxo.data_hash!);
-        let jsonDatum = cborToDatumJson(datum);
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash!);
+            let jsonDatum = cborToDatumJson(datum);
 
-        const builder: DefinitionBuilder =
-            await new DefinitionBuilder().loadDefinition(pool);
+            const builder: DefinitionBuilder =
+                await new DefinitionBuilder().loadDefinition(pool);
 
-        const parameters: DatumParameters = builder.pullParameters(
-            jsonDatum as DefinitionConstr
-        );
-        // Ignore Zap orders
-        if (
-            typeof parameters.PoolAssetBPolicyId === 'string' &&
-            parameters.PoolAssetBPolicyId === this.lpTokenPolicyId
-        ) {
+            const parameters: DatumParameters = builder.pullParameters(
+                jsonDatum as DefinitionConstr
+            );
+            // Ignore Zap orders
+            if (
+                typeof parameters.PoolAssetBPolicyId === 'string' &&
+                parameters.PoolAssetBPolicyId === this.lpTokenPolicyId
+            ) {
+                return undefined;
+            }
+
+            liquidityPool.poolFeePercent = Number(parameters.BaseFee) / 100;
+            if (
+                compareTokenWithPolicy(
+                    liquidityPool.assetA,
+                    String(parameters.PoolAssetAPolicyId!) +
+                        String(parameters.PoolAssetAAssetName!)
+                )
+            ) {
+                liquidityPool.reserveA = BigInt(parameters.ReserveA!);
+                liquidityPool.reserveB = BigInt(parameters.ReserveB!);
+            } else {
+                liquidityPool.reserveA = BigInt(parameters.ReserveB!);
+                liquidityPool.reserveB = BigInt(parameters.ReserveA!);
+            }
+        } catch (e) {
+            console.error(
+                `Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`
+            );
             return undefined;
-        }
-
-        liquidityPool.poolFeePercent = Number(parameters.BaseFee) / 100;
-        if (
-            compareTokenWithPolicy(
-                liquidityPool.assetA,
-                String(parameters.PoolAssetAPolicyId!) +
-                    String(parameters.PoolAssetAAssetName!)
-            )
-        ) {
-            liquidityPool.reserveA = BigInt(parameters.ReserveA!);
-            liquidityPool.reserveB = BigInt(parameters.ReserveB!);
-        } else {
-            liquidityPool.reserveA = BigInt(parameters.ReserveB!);
-            liquidityPool.reserveB = BigInt(parameters.ReserveA!);
         }
 
         return liquidityPool;

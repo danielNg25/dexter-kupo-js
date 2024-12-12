@@ -132,27 +132,35 @@ export class Vyfinance extends BaseDex {
             return Promise.resolve(undefined);
         }
 
-        const datum = await this.kupoApi.datum(utxo.data_hash!);
-        let jsonDatum = cborToDatumJson(datum);
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash!);
+            let jsonDatum = cborToDatumJson(datum);
 
-        const builder: DefinitionBuilder =
-            await new DefinitionBuilder().loadDefinition(pool);
+            const builder: DefinitionBuilder =
+                await new DefinitionBuilder().loadDefinition(pool);
 
-        const parameters: DatumParameters = builder.pullParameters(
-            jsonDatum as DefinitionConstr
-        );
+            const parameters: DatumParameters = builder.pullParameters(
+                jsonDatum as DefinitionConstr
+            );
 
-        liquidityPool.reserveA =
-            typeof parameters.PoolAssetABarFee === 'number' ||
-            typeof parameters.PoolAssetABarFee === 'string'
-                ? liquidityPool.reserveA - BigInt(parameters.PoolAssetABarFee)
-                : liquidityPool.reserveA;
-        liquidityPool.reserveB =
-            typeof parameters.PoolAssetBBarFee === 'number' ||
-            typeof parameters.PoolAssetBBarFee === 'string'
-                ? liquidityPool.reserveB - BigInt(parameters.PoolAssetBBarFee)
-                : liquidityPool.reserveB;
-
+            liquidityPool.reserveA =
+                typeof parameters.PoolAssetABarFee === 'number' ||
+                typeof parameters.PoolAssetABarFee === 'string'
+                    ? liquidityPool.reserveA -
+                      BigInt(parameters.PoolAssetABarFee)
+                    : liquidityPool.reserveA;
+            liquidityPool.reserveB =
+                typeof parameters.PoolAssetBBarFee === 'number' ||
+                typeof parameters.PoolAssetBBarFee === 'string'
+                    ? liquidityPool.reserveB -
+                      BigInt(parameters.PoolAssetBBarFee)
+                    : liquidityPool.reserveB;
+        } catch (e) {
+            console.error(
+                `Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`
+            );
+            return undefined;
+        }
         return liquidityPool;
     }
 

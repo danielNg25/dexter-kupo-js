@@ -1,7 +1,13 @@
 import { KupoApi } from '../KupoApi';
 import { Asset, Token } from '../models';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, joinPolicyId, LOVELACE, splitPolicyId } from '../utils';
+import {
+    compareTokenWithPolicy,
+    identifierToAsset,
+    joinPolicyId,
+    LOVELACE,
+    splitPolicyId,
+} from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/muesliswap/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
@@ -108,21 +114,28 @@ export class Muesliswap extends BaseDex {
             return Promise.resolve(undefined);
         }
 
-        const datum = await this.kupoApi.datum(utxo.data_hash!);
-        let jsonDatum = cborToDatumJson(datum);
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash!);
+            let jsonDatum = cborToDatumJson(datum);
 
-        const builder: DefinitionBuilder =
-            await new DefinitionBuilder().loadDefinition(pool);
+            const builder: DefinitionBuilder =
+                await new DefinitionBuilder().loadDefinition(pool);
 
-        const parameters: DatumParameters = builder.pullParameters(
-            jsonDatum as DefinitionConstr
-        );
+            const parameters: DatumParameters = builder.pullParameters(
+                jsonDatum as DefinitionConstr
+            );
 
-        liquidityPool.poolFeePercent =
-            typeof parameters.LpFee === 'number' ||
-            typeof parameters.LpFee === 'string'
-                ? Number(parameters.LpFee) / 100
-                : 0;
+            liquidityPool.poolFeePercent =
+                typeof parameters.LpFee === 'number' ||
+                typeof parameters.LpFee === 'string'
+                    ? Number(parameters.LpFee) / 100
+                    : 0;
+        } catch (e) {
+            console.error(
+                `Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`
+            );
+            return undefined;
+        }
 
         return liquidityPool;
     }

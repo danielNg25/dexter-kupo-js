@@ -63,19 +63,25 @@ export class SundaeSwapV1 extends BaseDex {
         if (!liquidityPool) {
             return Promise.resolve(undefined);
         }
-        const datum = await this.kupoApi.datum(utxo.data_hash);
-        let jsonDatum = cborToDatumJson(datum);
-        const builder = await new DefinitionBuilder().loadDefinition(pool);
-        const parameters = builder.pullParameters(jsonDatum);
-        liquidityPool.poolFeePercent =
-            (typeof parameters.LpFeeNumerator === 'string' ||
-                typeof parameters.LpFeeNumerator === 'number') &&
-                (typeof parameters.LpFeeDenominator === 'number' ||
-                    typeof parameters.LpFeeDenominator === 'string')
-                ? (Number(parameters.LpFeeNumerator) /
-                    Number(parameters.LpFeeDenominator)) *
-                    100
-                : 0;
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash);
+            let jsonDatum = cborToDatumJson(datum);
+            const builder = await new DefinitionBuilder().loadDefinition(pool);
+            const parameters = builder.pullParameters(jsonDatum);
+            liquidityPool.poolFeePercent =
+                (typeof parameters.LpFeeNumerator === 'string' ||
+                    typeof parameters.LpFeeNumerator === 'number') &&
+                    (typeof parameters.LpFeeDenominator === 'number' ||
+                        typeof parameters.LpFeeDenominator === 'string')
+                    ? (Number(parameters.LpFeeNumerator) /
+                        Number(parameters.LpFeeDenominator)) *
+                        100
+                    : 0;
+        }
+        catch (e) {
+            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`);
+            return undefined;
+        }
         return liquidityPool;
     }
     async liquidityPoolFromPoolId(poolId) {

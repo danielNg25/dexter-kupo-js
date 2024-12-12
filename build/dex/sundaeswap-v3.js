@@ -63,23 +63,29 @@ export class SundaeSwapV3 extends BaseDex {
         if (!liquidityPool) {
             return Promise.resolve(undefined);
         }
-        const datum = await this.kupoApi.datum(utxo.data_hash);
-        let jsonDatum = cborToDatumJson(datum);
-        const builder = await new DefinitionBuilder().loadDefinition(pool);
-        const parameters = builder.pullParameters(jsonDatum);
-        liquidityPool.poolFeePercent =
-            typeof parameters.FinalFee === 'string' ||
-                typeof parameters.FinalFee === 'number'
-                ? Number(parameters.FinalFee) / 100
-                : 0;
-        if (parameters.LovelaceDeduction) {
-            const deduction = BigInt(parameters.LovelaceDeduction);
-            if (compareTokenWithPolicy(liquidityPool.assetA, LOVELACE)) {
-                liquidityPool.reserveA -= deduction;
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash);
+            let jsonDatum = cborToDatumJson(datum);
+            const builder = await new DefinitionBuilder().loadDefinition(pool);
+            const parameters = builder.pullParameters(jsonDatum);
+            liquidityPool.poolFeePercent =
+                typeof parameters.FinalFee === 'string' ||
+                    typeof parameters.FinalFee === 'number'
+                    ? Number(parameters.FinalFee) / 100
+                    : 0;
+            if (parameters.LovelaceDeduction) {
+                const deduction = BigInt(parameters.LovelaceDeduction);
+                if (compareTokenWithPolicy(liquidityPool.assetA, LOVELACE)) {
+                    liquidityPool.reserveA -= deduction;
+                }
+                else if (compareTokenWithPolicy(liquidityPool.assetB, LOVELACE)) {
+                    liquidityPool.reserveB -= deduction;
+                }
             }
-            else if (compareTokenWithPolicy(liquidityPool.assetB, LOVELACE)) {
-                liquidityPool.reserveB -= deduction;
-            }
+        }
+        catch (e) {
+            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`);
+            return undefined;
         }
         return liquidityPool;
     }

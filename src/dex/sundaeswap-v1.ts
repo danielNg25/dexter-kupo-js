@@ -99,25 +99,32 @@ export class SundaeSwapV1 extends BaseDex {
             return Promise.resolve(undefined);
         }
 
-        const datum = await this.kupoApi.datum(utxo.data_hash!);
-        let jsonDatum = cborToDatumJson(datum);
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash!);
+            let jsonDatum = cborToDatumJson(datum);
 
-        const builder: DefinitionBuilder =
-            await new DefinitionBuilder().loadDefinition(pool);
+            const builder: DefinitionBuilder =
+                await new DefinitionBuilder().loadDefinition(pool);
 
-        const parameters: DatumParameters = builder.pullParameters(
-            jsonDatum as DefinitionConstr
-        );
+            const parameters: DatumParameters = builder.pullParameters(
+                jsonDatum as DefinitionConstr
+            );
 
-        liquidityPool.poolFeePercent =
-            (typeof parameters.LpFeeNumerator === 'string' ||
-                typeof parameters.LpFeeNumerator === 'number') &&
-            (typeof parameters.LpFeeDenominator === 'number' ||
-                typeof parameters.LpFeeDenominator === 'string')
-                ? (Number(parameters.LpFeeNumerator) /
-                      Number(parameters.LpFeeDenominator)) *
-                  100
-                : 0;
+            liquidityPool.poolFeePercent =
+                (typeof parameters.LpFeeNumerator === 'string' ||
+                    typeof parameters.LpFeeNumerator === 'number') &&
+                (typeof parameters.LpFeeDenominator === 'number' ||
+                    typeof parameters.LpFeeDenominator === 'string')
+                    ? (Number(parameters.LpFeeNumerator) /
+                          Number(parameters.LpFeeDenominator)) *
+                      100
+                    : 0;
+        } catch (e) {
+            console.error(
+                `Failed parsing datum for liquidity pool ${liquidityPool.reserveA}/${liquidityPool.reserveB}`
+            );
+            return undefined;
+        }
 
         return liquidityPool;
     }
