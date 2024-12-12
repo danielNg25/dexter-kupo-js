@@ -1,6 +1,6 @@
 import { KupoApi } from '../KupoApi';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/wingriders-v2/pool';
 import stable_pool from './definitions/wingriders-v2/stable-pool';
@@ -171,7 +171,7 @@ export class WingRidersV2 extends BaseDex {
                     ReserveFeeInBasis) /
                 100;
         } catch (e) {
-            console.error(
+            throw new Error(
                 `Failed parsing datum for liquidity pool ${
                     liquidityPool.dex.identifier
                 } ${tokenName(liquidityPool.assetA)}/${tokenName(
@@ -227,7 +227,13 @@ export class WingRidersV2 extends BaseDex {
 
         return (
             await Promise.all(
-                pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))
+                pools.map((pool) =>
+                    retry(
+                        () => this.liquidityPoolFromPoolId(pool.poolId),
+                        5,
+                        100
+                    )
+                )
             )
         )
             .filter((pool): pool is LiquidityPool => pool !== undefined) // Type guard for filtering

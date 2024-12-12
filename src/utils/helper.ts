@@ -43,7 +43,7 @@ export // Helper function for retrying
 async function retry<T>(
     fn: () => Promise<T>,
     retries: number = 5,
-    delay: number = 100
+    delay: number = 500
 ): Promise<T> {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {

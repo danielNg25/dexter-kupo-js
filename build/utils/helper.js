@@ -28,7 +28,7 @@ export const removeTrailingSlash = (url) => {
     return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 export // Helper function for retrying
- async function retry(fn, retries = 5, delay = 100) {
+ async function retry(fn, retries = 5, delay = 500) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
             return await fn(); // Attempt to execute the function

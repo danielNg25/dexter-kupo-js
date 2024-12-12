@@ -1,4 +1,4 @@
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
@@ -86,7 +86,7 @@ export class MinswapV2 extends BaseDex {
             }
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}`);
+            throw new Error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}`);
             return undefined;
         }
         return liquidityPool;
@@ -118,7 +118,7 @@ export class MinswapV2 extends BaseDex {
         if (pools.length === 0) {
             return Promise.resolve(undefined);
         }
-        return (await Promise.all(pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))))
+        return (await Promise.all(pools.map((pool) => retry(() => this.liquidityPoolFromPoolId(pool.poolId), 5, 100))))
             .filter((pool) => pool !== undefined) // Type guard for filtering
             .map((pool) => {
             const setDecimals = (asset) => {

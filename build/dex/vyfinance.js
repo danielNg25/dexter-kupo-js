@@ -1,5 +1,5 @@
 import { Asset, tokenName } from '../models/asset';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry, } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/vyfinance/pool';
 import { cborToDatumJson } from './definitions/utils';
@@ -91,7 +91,7 @@ export class Vyfinance extends BaseDex {
                     : liquidityPool.reserveB;
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}  PoolId: ${liquidityPool.poolId}`);
+            throw new Error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}  PoolId: ${liquidityPool.poolId}`);
             return undefined;
         }
         return liquidityPool;
@@ -134,7 +134,7 @@ export class Vyfinance extends BaseDex {
             ...(structuredData[tokenA]?.[tokenB] || []),
         ];
         // Fetch pools
-        const pools = await Promise.all(poolDatas.map(async (poolData) => this.liquidityPoolFromPoolId(poolData.poolNftPolicyId)));
+        const pools = await Promise.all(poolDatas.map(async (poolData) => retry(() => this.liquidityPoolFromPoolId(poolData.poolNftPolicyId), 5, 100)));
         // Return filtered pools
         return pools.filter((pool) => pool !== undefined).map((pool) => {
             const setDecimals = (asset) => {

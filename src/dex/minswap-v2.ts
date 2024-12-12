@@ -1,6 +1,6 @@
 import { KupoApi } from '../KupoApi';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
@@ -143,7 +143,7 @@ export class MinswapV2 extends BaseDex {
                 liquidityPool.reserveB = BigInt(parameters.ReserveA!);
             }
         } catch (e) {
-            console.error(
+            throw new Error(
                 `Failed parsing datum for liquidity pool ${
                     liquidityPool.dex.identifier
                 } ${liquidityPool.dex.identifier} ${tokenName(
@@ -200,7 +200,13 @@ export class MinswapV2 extends BaseDex {
 
         return (
             await Promise.all(
-                pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))
+                pools.map((pool) =>
+                    retry(
+                        () => this.liquidityPoolFromPoolId(pool.poolId),
+                        5,
+                        100
+                    )
+                )
             )
         )
             .filter((pool): pool is LiquidityPool => pool !== undefined) // Type guard for filtering

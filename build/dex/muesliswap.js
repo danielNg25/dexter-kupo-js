@@ -1,5 +1,5 @@
 import { tokenName } from '../models';
-import { compareTokenWithPolicy, identifierToAsset, joinPolicyId, LOVELACE, splitPolicyId, } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, joinPolicyId, LOVELACE, retry, splitPolicyId, } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/muesliswap/pool';
 import { cborToDatumJson } from './definitions/utils';
@@ -74,7 +74,7 @@ export class Muesliswap extends BaseDex {
                     : 0;
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}  PoolId: ${liquidityPool.poolId}`);
+            throw new Error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}  PoolId: ${liquidityPool.poolId}`);
             return undefined;
         }
         return liquidityPool;
@@ -101,7 +101,7 @@ export class Muesliswap extends BaseDex {
         if (pools.length === 0) {
             return Promise.resolve(undefined);
         }
-        return (await Promise.all(pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))))
+        return (await Promise.all(pools.map((pool) => retry(() => this.liquidityPoolFromPoolId(pool.poolId), 5, 100))))
             .filter((pool) => pool !== undefined) // Type guard for filtering
             .map((pool) => {
             const setDecimals = (asset) => {

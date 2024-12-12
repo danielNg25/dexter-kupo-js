@@ -6,6 +6,7 @@ import {
     identifierToAsset,
     joinPolicyId,
     LOVELACE,
+    retry,
     splitPolicyId,
 } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
@@ -131,7 +132,7 @@ export class Muesliswap extends BaseDex {
                     ? Number(parameters.LpFee) / 100
                     : 0;
         } catch (e) {
-            console.error(
+            throw new Error(
                 `Failed parsing datum for liquidity pool ${
                     liquidityPool.dex.identifier
                 } ${tokenName(liquidityPool.assetA)}/${tokenName(
@@ -184,7 +185,13 @@ export class Muesliswap extends BaseDex {
 
         return (
             await Promise.all(
-                pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))
+                pools.map((pool) =>
+                    retry(
+                        () => this.liquidityPoolFromPoolId(pool.poolId),
+                        5,
+                        100
+                    )
+                )
             )
         )
             .filter((pool): pool is LiquidityPool => pool !== undefined) // Type guard for filtering

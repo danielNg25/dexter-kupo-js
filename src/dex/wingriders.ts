@@ -1,6 +1,6 @@
 import { KupoApi } from '../KupoApi';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/wingriders/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
@@ -145,7 +145,7 @@ export class WingRiders extends BaseDex {
                       BigInt(parameters.PoolAssetBTreasury)
                     : liquidityPool.reserveB;
         } catch (e) {
-            console.error(
+            throw new Error(
                 `Failed parsing datum for liquidity pool ${
                     liquidityPool.dex.identifier
                 } ${tokenName(liquidityPool.assetA)}/${tokenName(
@@ -202,7 +202,13 @@ export class WingRiders extends BaseDex {
 
         return (
             await Promise.all(
-                pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))
+                pools.map((pool) =>
+                    retry(
+                        () => this.liquidityPoolFromPoolId(pool.poolId),
+                        5,
+                        100
+                    )
+                )
             )
         )
             .filter((pool): pool is LiquidityPool => pool !== undefined) // Type guard for filtering

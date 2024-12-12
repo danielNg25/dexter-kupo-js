@@ -1,4 +1,4 @@
-import { compareTokenWithPolicy, identifierToAsset, joinPolicyId, LOVELACE, splitPolicyId, } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, joinPolicyId, LOVELACE, retry, splitPolicyId, } from '../utils';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
@@ -84,7 +84,7 @@ export class Minswap extends BaseDex {
         if (pools.length === 0) {
             return Promise.resolve(undefined);
         }
-        return (await Promise.all(pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))))
+        return (await Promise.all(pools.map((pool) => retry(() => this.liquidityPoolFromPoolId(pool.poolId), 5, 100))))
             .filter((pool) => pool !== undefined) // Type guard for filtering
             .map((pool) => {
             const setDecimals = (asset) => {

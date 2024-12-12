@@ -1,4 +1,4 @@
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/wingriders-v2/pool';
 import stable_pool from './definitions/wingriders-v2/stable-pool';
@@ -117,7 +117,7 @@ export class WingRidersV2 extends BaseDex {
                     100;
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}  PoolId: ${liquidityPool.poolId}`);
+            throw new Error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}  PoolId: ${liquidityPool.poolId}`);
             return undefined;
         }
         return liquidityPool;
@@ -149,7 +149,7 @@ export class WingRidersV2 extends BaseDex {
         if (pools.length === 0) {
             return Promise.resolve(undefined);
         }
-        return (await Promise.all(pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))))
+        return (await Promise.all(pools.map((pool) => retry(() => this.liquidityPoolFromPoolId(pool.poolId), 5, 100))))
             .filter((pool) => pool !== undefined) // Type guard for filtering
             .map((pool) => {
             const setDecimals = (asset) => {

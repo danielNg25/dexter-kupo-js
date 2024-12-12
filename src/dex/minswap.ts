@@ -5,6 +5,7 @@ import {
     identifierToAsset,
     joinPolicyId,
     LOVELACE,
+    retry,
     splitPolicyId,
 } from '../utils';
 import { BaseDex } from './models/base-dex';
@@ -153,7 +154,13 @@ export class Minswap extends BaseDex {
 
         return (
             await Promise.all(
-                pools.map((pool) => this.liquidityPoolFromPoolId(pool.poolId))
+                pools.map((pool) =>
+                    retry(
+                        () => this.liquidityPoolFromPoolId(pool.poolId),
+                        5,
+                        100
+                    )
+                )
             )
         )
             .filter((pool): pool is LiquidityPool => pool !== undefined) // Type guard for filtering

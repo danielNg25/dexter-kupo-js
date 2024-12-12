@@ -1,7 +1,12 @@
 import { KupoApi } from '../KupoApi';
 import { Asset, tokenName } from '../models/asset';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE } from '../utils';
+import {
+    compareTokenWithPolicy,
+    identifierToAsset,
+    LOVELACE,
+    retry,
+} from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/vyfinance/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
@@ -156,7 +161,7 @@ export class Vyfinance extends BaseDex {
                       BigInt(parameters.PoolAssetBBarFee)
                     : liquidityPool.reserveB;
         } catch (e) {
-            console.error(
+            throw new Error(
                 `Failed parsing datum for liquidity pool ${
                     liquidityPool.dex.identifier
                 } ${tokenName(liquidityPool.assetA)}/${tokenName(
@@ -230,7 +235,12 @@ export class Vyfinance extends BaseDex {
         // Fetch pools
         const pools = await Promise.all(
             poolDatas.map(async (poolData) =>
-                this.liquidityPoolFromPoolId(poolData.poolNftPolicyId)
+                retry(
+                    () =>
+                        this.liquidityPoolFromPoolId(poolData.poolNftPolicyId),
+                    5,
+                    100
+                )
             )
         );
 
