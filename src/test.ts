@@ -20,18 +20,19 @@ import pool from './dex/definitions/minswap-v2/pool';
 import { WingRiders } from './dex/wingriders';
 import { WingRidersV2 } from './dex/wingriders-v2';
 import { Asset } from './models';
-import { compareTokenWithPolicy, fetchAssetMetadata } from './utils';
+import { compareTokenWithPolicy, fetchAssetMetadata, LOVELACE } from './utils';
 import { Muesliswap } from './dex/muesliswap';
 
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
 
-    const minswap = new Muesliswap(kupo);
+    const minswap = new SundaeSwapV3(kupo);
 
     const start = new Date().getTime();
     minswap
         .liquidityPoolsFromToken(
-            'afbe91c0b44b3040e360057bf8354ead8c49c4979ae6ab7c4fbdc9eb4d494c4b7632'
+            '59bc0484225992f0fafffc472784f89f1c75e496cb570ec2922b9243444344',
+            LOVELACE
         )
         .then((values) => {
             const end = new Date().getTime();

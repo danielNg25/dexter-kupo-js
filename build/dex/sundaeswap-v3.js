@@ -85,7 +85,7 @@ export class SundaeSwapV3 extends BaseDex {
             }
         }
         catch (e) {
-            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}`);
+            console.error(`Failed parsing datum for liquidity pool ${liquidityPool.dex.identifier} ${tokenName(liquidityPool.assetA)}/${tokenName(liquidityPool.assetB)}  PoolId: ${liquidityPool.poolId} PoolId: ${liquidityPool.poolId}`);
             return undefined;
         }
         return liquidityPool;

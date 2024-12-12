@@ -150,7 +150,7 @@ export class WingRiders extends BaseDex {
                     liquidityPool.dex.identifier
                 } ${tokenName(liquidityPool.assetA)}/${tokenName(
                     liquidityPool.assetB
-                )}`
+                )}  PoolId: ${liquidityPool.poolId}`
             );
             return undefined;
         }

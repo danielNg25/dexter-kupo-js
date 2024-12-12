@@ -1,15 +1,16 @@
 import { KupoApi } from './KupoApi';
 import { BlockFrostAPI } from '@blockfrost/blockfrost-js';
 import * as fs from 'fs';
+import { SundaeSwapV3 } from './dex/sundaeswap-v3';
 const url = 'https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/matches/addr1qyzk2jnlyklmcpjlaqt8r73uqmdkmq8jdl83uvgf6crnnqcjtcz8hchkwxt6s9afm7eqzlx4y4v5r93sl6eph6k9f54s24cyg5';
 import { cborToDatumJson } from './dex/definitions/utils';
-import { Muesliswap } from './dex/muesliswap';
+import { LOVELACE } from './utils';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1444/');
-    const minswap = new Muesliswap(kupo);
+    const minswap = new SundaeSwapV3(kupo);
     const start = new Date().getTime();
     minswap
-        .liquidityPoolsFromToken('afbe91c0b44b3040e360057bf8354ead8c49c4979ae6ab7c4fbdc9eb4d494c4b7632')
+        .liquidityPoolsFromToken('59bc0484225992f0fafffc472784f89f1c75e496cb570ec2922b9243444344', LOVELACE)
         .then((values) => {
         const end = new Date().getTime();
         console.log(values);

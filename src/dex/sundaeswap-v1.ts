@@ -126,7 +126,7 @@ export class SundaeSwapV1 extends BaseDex {
                     liquidityPool.dex.identifier
                 } ${tokenName(liquidityPool.assetA)}/${tokenName(
                     liquidityPool.assetB
-                )}`
+                )}  PoolId: ${liquidityPool.poolId}`
             );
             return undefined;
         }
