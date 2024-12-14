@@ -1,8 +1,14 @@
 import { KupoApi } from '../KupoApi';
 import { tokenName } from '../models';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
+import {
+    compareTokenWithPolicy,
+    identifierToAsset,
+    LOVELACE,
+    retry,
+} from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
+import order from './definitions/sundaeswap-v3/order';
 import pool from './definitions/sundaeswap-v3/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
 import { cborToDatumJson } from './definitions/utils';
@@ -213,5 +219,19 @@ export class SundaeSwapV3 extends BaseDex {
 
                 return pool;
             });
+    }
+
+    async parseOrderDatum(datum: string): Promise<DatumParameters> {
+        return this._parseOrderDatum(datum, order);
+    }
+
+    async fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters> {
+        const datum = await this.kupoApi.datum(datumHash);
+
+        if (!datum) {
+            throw new Error(`Datum not found for hash: ${datumHash}`);
+        }
+
+        return await this.parseOrderDatum(datum);
     }
 }

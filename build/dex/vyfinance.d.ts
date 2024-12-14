@@ -1,5 +1,6 @@
 import { KupoApi } from '../KupoApi';
 import { UTXO } from '../types';
+import { DatumParameters } from './definitions/types';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 export type VyfinancePoolData = {
@@ -30,4 +31,6 @@ export declare class Vyfinance extends BaseDex {
     liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
     liquidityPoolsFromToken(tokenB: string, tokenA: string | undefined, tokenBDecimals: number | undefined, tokenADecimals: number | undefined, filePath: string): Promise<Array<LiquidityPool> | undefined>;
+    parseOrderDatum(datum: string): Promise<DatumParameters>;
+    fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters>;
 }

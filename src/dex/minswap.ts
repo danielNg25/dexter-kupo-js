@@ -11,6 +11,8 @@ import {
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
+import order from './definitions/minswap/order';
+import { DatumParameters } from './definitions/types';
 
 export class Minswap extends BaseDex {
     public readonly identifier: string = DEX_IDENTIFIERS.MINSWAP;
@@ -180,5 +182,19 @@ export class Minswap extends BaseDex {
 
                 return pool;
             });
+    }
+
+    async parseOrderDatum(datum: string): Promise<DatumParameters> {
+        return this._parseOrderDatum(datum, order);
+    }
+
+    async fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters> {
+        const datum = await this.kupoApi.datum(datumHash);
+
+        if (!datum) {
+            throw new Error(`Datum not found for hash: ${datumHash}`);
+        }
+
+        return await this.parseOrderDatum(datum);
     }
 }

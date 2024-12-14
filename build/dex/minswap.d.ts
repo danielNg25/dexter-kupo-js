@@ -2,6 +2,7 @@ import { KupoApi } from '../KupoApi';
 import { UTXO } from '../types';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
+import { DatumParameters } from './definitions/types';
 export declare class Minswap extends BaseDex {
     readonly identifier: string;
     /**
@@ -25,4 +26,6 @@ export declare class Minswap extends BaseDex {
     liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
     liquidityPoolsFromToken(tokenB: string, tokenA?: string, tokenBDecimals?: number, tokenADecimals?: number, allLiquidityPools?: LiquidityPool[]): Promise<Array<LiquidityPool> | undefined>;
+    parseOrderDatum(datum: string): Promise<DatumParameters>;
+    fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters>;
 }

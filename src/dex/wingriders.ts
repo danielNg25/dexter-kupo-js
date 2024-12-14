@@ -1,6 +1,11 @@
 import { KupoApi } from '../KupoApi';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
+import {
+    compareTokenWithPolicy,
+    identifierToAsset,
+    LOVELACE,
+    retry,
+} from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import pool from './definitions/wingriders/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
@@ -9,6 +14,7 @@ import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 import { tokenName } from '../models';
+import order from './definitions/wingriders/order';
 const MIN_POOL_ADA: bigint = 3_000_000n;
 
 export class WingRiders extends BaseDex {
@@ -228,5 +234,19 @@ export class WingRiders extends BaseDex {
 
                 return pool;
             });
+    }
+
+    async parseOrderDatum(datum: string): Promise<DatumParameters> {
+        return this._parseOrderDatum(datum, order);
+    }
+
+    async fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters> {
+        const datum = await this.kupoApi.datum(datumHash);
+
+        if (!datum) {
+            throw new Error(`Datum not found for hash: ${datumHash}`);
+        }
+
+        return await this.parseOrderDatum(datum);
     }
 }
