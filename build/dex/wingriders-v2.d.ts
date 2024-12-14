@@ -1,5 +1,6 @@
 import { KupoApi } from '../KupoApi';
 import { UTXO } from '../types';
+import { DatumParameters } from './definitions/types';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 export declare class WingRidersV2 extends BaseDex {
@@ -23,4 +24,6 @@ export declare class WingRidersV2 extends BaseDex {
     liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
     liquidityPoolsFromToken(tokenB: string, tokenA?: string, tokenBDecimals?: number, tokenADecimals?: number, allLiquidityPools?: LiquidityPool[]): Promise<Array<LiquidityPool> | undefined>;
+    parseOrderDatum(datum: string): Promise<DatumParameters>;
+    fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters>;
 }

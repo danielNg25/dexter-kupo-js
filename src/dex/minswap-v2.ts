@@ -1,6 +1,11 @@
 import { KupoApi } from '../KupoApi';
 import { Unit, UTXO } from '../types';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
+import {
+    compareTokenWithPolicy,
+    identifierToAsset,
+    LOVELACE,
+    retry,
+} from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
@@ -9,6 +14,7 @@ import pool from './definitions/minswap-v2/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
 import { cborToDatumJson } from './definitions/utils';
 import { tokenName } from '../models';
+import order from './definitions/minswap-v2/order';
 
 export class MinswapV2 extends BaseDex {
     public readonly identifier: string = DEX_IDENTIFIERS.MINSWAPV2;
@@ -16,6 +22,8 @@ export class MinswapV2 extends BaseDex {
     /**
      * On-Chain constants.
      */
+    public readonly marketOrderAddress: string =
+        'addr1z8p79rpkcdz8x9d6tft0x0dx5mwuzac2sa4gm8cvkw5hcnpkaw4r73n8k0y2u0e8kgcs2x7urap2kk50m2htrrwk4qkqgzxq6v';
     public readonly lpTokenPolicyId: string =
         'f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c';
     public readonly poolValidityAsset: string =
@@ -226,5 +234,19 @@ export class MinswapV2 extends BaseDex {
 
                 return pool;
             });
+    }
+
+    async parseOrderDatum(datum: string): Promise<DatumParameters> {
+        return this._parseOrderDatum(datum, order);
+    }
+
+    async fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters> {
+        const datum = await this.kupoApi.datum(datumHash);
+
+        if (!datum) {
+            throw new Error(`Datum not found for hash: ${datumHash}`);
+        }
+
+        return await this.parseOrderDatum(datum);
     }
 }

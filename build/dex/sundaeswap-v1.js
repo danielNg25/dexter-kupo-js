@@ -1,6 +1,7 @@
 import { tokenName } from '../models';
-import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry, } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
+import order from './definitions/sundaeswap-v1/order';
 import pool from './definitions/sundaeswap-v1/pool';
 import { cborToDatumJson } from './definitions/utils';
 import { BaseDex } from './models/base-dex';
@@ -126,5 +127,15 @@ export class SundaeSwapV1 extends BaseDex {
             setDecimals(pool.assetB);
             return pool;
         });
+    }
+    async parseOrderDatum(datum) {
+        return this._parseOrderDatum(datum, order);
+    }
+    async fetchAndParseOrderDatum(datumHash) {
+        const datum = await this.kupoApi.datum(datumHash);
+        if (!datum) {
+            throw new Error(`Datum not found for hash: ${datumHash}`);
+        }
+        return await this.parseOrderDatum(datum);
     }
 }

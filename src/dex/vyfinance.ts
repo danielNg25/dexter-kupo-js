@@ -15,6 +15,7 @@ import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 import * as fs from 'fs';
+import order from './definitions/vyfinance/order';
 
 export type VyfinancePoolData = {
     unitsPair: string;
@@ -263,5 +264,19 @@ export class Vyfinance extends BaseDex {
 
             return pool;
         });
+    }
+
+    async parseOrderDatum(datum: string): Promise<DatumParameters> {
+        return this._parseOrderDatum(datum, order);
+    }
+
+    async fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters> {
+        const datum = await this.kupoApi.datum(datumHash);
+
+        if (!datum) {
+            throw new Error(`Datum not found for hash: ${datumHash}`);
+        }
+
+        return await this.parseOrderDatum(datum);
     }
 }

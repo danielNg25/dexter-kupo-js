@@ -7,6 +7,7 @@ import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 import * as fs from 'fs';
+import order from './definitions/vyfinance/order';
 // Function to structure and write data to a JSON file
 function writeVyfinanceDataToFile(data, filePath) {
     const structuredData = {};
@@ -148,5 +149,15 @@ export class Vyfinance extends BaseDex {
             setDecimals(pool.assetB);
             return pool;
         });
+    }
+    async parseOrderDatum(datum) {
+        return this._parseOrderDatum(datum, order);
+    }
+    async fetchAndParseOrderDatum(datumHash) {
+        const datum = await this.kupoApi.datum(datumHash);
+        if (!datum) {
+            throw new Error(`Datum not found for hash: ${datumHash}`);
+        }
+        return await this.parseOrderDatum(datum);
     }
 }
