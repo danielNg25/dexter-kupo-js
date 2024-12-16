@@ -10,9 +10,10 @@ export declare class LiquidityPool {
     poolId: string;
     identifier: string;
     poolFeePercent: number;
+    poolLpTokens?: Token;
     totalLpTokens: bigint;
     extra: any;
-    constructor(dex: BaseDex, assetA: Token, assetB: Token, reserveA: bigint, reserveB: bigint, address: string, poolFeePercent: number, poolId?: string);
+    constructor(dex: BaseDex, assetA: Token, assetB: Token, reserveA: bigint, reserveB: bigint, address: string, poolFeePercent: number, poolId?: string, poolLpTokens?: Token);
     get uuid(): string;
     get pair(): string;
     get price(): number;

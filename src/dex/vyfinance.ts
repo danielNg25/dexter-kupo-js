@@ -187,6 +187,76 @@ export class Vyfinance extends BaseDex {
         return this.liquidityPoolFromUtxoExtend(utxos[0], poolId);
     }
 
+    async liquidityPoolFromValidatorAddress(
+        validatorAddress: string,
+        filePath: string
+    ): Promise<LiquidityPool | undefined> {
+        // Ensure the file exists
+        if (!fs.existsSync(filePath)) {
+            const data = await this.allLiquidityPoolDatas();
+            writeVyfinanceDataToFile(data, filePath);
+        }
+
+        // Parse the structured data
+        let structuredData: Record<
+            string,
+            Record<string, Array<VyfinancePoolData>>
+        > = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+        let pool = Vyfinance.findPoolDataByAddress(
+            structuredData,
+            validatorAddress
+        );
+
+        if (!pool) {
+            const data = await this.allLiquidityPoolDatas();
+            writeVyfinanceDataToFile(data, filePath);
+            structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+            pool = Vyfinance.findPoolDataByAddress(
+                structuredData,
+                validatorAddress
+            );
+
+            if (!pool) {
+                return undefined;
+            }
+        }
+
+        return retry(
+            () => this.liquidityPoolFromPoolId(pool.poolNftPolicyId),
+            5,
+            100
+        );
+    }
+
+    static findPoolDataByAddress(
+        structuredData: Record<
+            string,
+            Record<string, Array<VyfinancePoolData>>
+        >,
+        givenAddress: string
+    ): VyfinancePoolData | undefined {
+        // Iterate through the top-level keys
+        for (const tokenA in structuredData) {
+            for (const tokenB in structuredData[tokenA]) {
+                const pools = structuredData[tokenA][tokenB];
+
+                // Find the first matching pool
+                const matchedPool = pools.find(
+                    (pool) => pool.orderValidatorUtxoAddress === givenAddress
+                );
+
+                // Return immediately if a match is found
+                if (matchedPool) {
+                    return matchedPool;
+                }
+            }
+        }
+
+        // Return undefined if no match is found
+        return undefined;
+    }
     async liquidityPoolsFromToken(
         tokenB: string,
         tokenA: string = LOVELACE,

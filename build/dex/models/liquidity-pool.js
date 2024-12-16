@@ -1,6 +1,6 @@
 import { handleError } from '../../utils';
 export class LiquidityPool {
-    constructor(dex, assetA, assetB, reserveA, reserveB, address, poolFeePercent, poolId) {
+    constructor(dex, assetA, assetB, reserveA, reserveB, address, poolFeePercent, poolId, poolLpTokens) {
         this.poolId = '';
         this.identifier = '';
         this.poolFeePercent = 0;
@@ -14,6 +14,7 @@ export class LiquidityPool {
         this.address = address;
         this.poolFeePercent = poolFeePercent;
         this.poolId = poolId || '';
+        this.poolLpTokens = poolLpTokens;
     }
     get uuid() {
         return `${this.dex}.${this.pair}.${this.identifier}`;

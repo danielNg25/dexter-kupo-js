@@ -21,11 +21,12 @@ import { WingRiders } from './dex/wingriders';
 import { WingRidersV2 } from './dex/wingriders-v2';
 import { Asset } from './models';
 import { compareTokenWithPolicy, fetchAssetMetadata, LOVELACE } from './utils';
+import { Cardano } from '@cardano-sdk/core';
 
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1443/');
 
-    const minswap = new SundaeSwapV1(kupo);
+    const minswap = new Vyfinance(kupo);
 
     const start = new Date().getTime();
     // minswap
@@ -50,7 +51,7 @@ const main = async () => {
 
     minswap
         .fetchAndParseOrderDatum(
-            '10c27783bdf29fd5a6555bddf583f1a118141c1f0a831303371c92fb6726d0b3'
+            'bf297ed08e9ad334c963650fdcc686ff11020f538723efd16ae63f3bebc77c5d'
         )
         .then((values) => {
             const end = new Date().getTime();

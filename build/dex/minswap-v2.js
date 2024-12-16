@@ -14,7 +14,6 @@ export class MinswapV2 extends BaseDex {
         /**
          * On-Chain constants.
          */
-        this.marketOrderAddress = 'addr1z8p79rpkcdz8x9d6tft0x0dx5mwuzac2sa4gm8cvkw5hcnpkaw4r73n8k0y2u0e8kgcs2x7urap2kk50m2htrrwk4qkqgzxq6v';
         this.lpTokenPolicyId = 'f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c';
         this.poolValidityAsset = 'f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c4d5350'; // Pool authen asset
         this.orderScriptHash = 'c3e28c36c3447315ba5a56f33da6a6ddc1770a876a8d9f0cb3a97c4c';
