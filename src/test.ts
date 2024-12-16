@@ -26,7 +26,7 @@ import { Cardano } from '@cardano-sdk/core';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1443/');
 
-    const minswap = new Vyfinance(kupo);
+    const minswap = new SundaeSwapV3(kupo);
 
     const start = new Date().getTime();
     // minswap
@@ -51,7 +51,7 @@ const main = async () => {
 
     minswap
         .fetchAndParseOrderDatum(
-            'bf297ed08e9ad334c963650fdcc686ff11020f538723efd16ae63f3bebc77c5d'
+            '72aea92e9ac8b490cc4adab80cd72c29c9132e69f87193aaa51b2fd857e5894d'
         )
         .then((values) => {
             const end = new Date().getTime();
