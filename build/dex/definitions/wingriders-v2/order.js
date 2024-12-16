@@ -67,7 +67,9 @@ export default {
                 },
             ],
         },
-        [],
+        (field, parameters, shouldExtract = true) => {
+            return parameters;
+        },
         {
             constructor: 0,
             fields: [],

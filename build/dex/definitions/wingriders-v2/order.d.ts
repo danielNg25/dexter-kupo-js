@@ -1,7 +1,8 @@
 import { DatumParameterKey } from '../constants';
+import { DatumParameters, DefinitionField } from '../types';
 declare const _default: {
     constructor: number;
-    fields: (never[] | {
+    fields: (((field: DefinitionField, parameters: DatumParameters, shouldExtract?: boolean) => DatumParameters) | {
         int: DatumParameterKey;
         constructor?: undefined;
         fields?: undefined;

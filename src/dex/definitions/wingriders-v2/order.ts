@@ -1,4 +1,5 @@
 import { DatumParameterKey } from '../constants';
+import { DatumParameters, DefinitionField } from '../types';
 
 export default {
     constructor: 0,
@@ -68,7 +69,13 @@ export default {
                 },
             ],
         },
-        [],
+        (
+            field: DefinitionField,
+            parameters: DatumParameters,
+            shouldExtract: boolean = true
+        ) => {
+            return parameters;
+        },
         {
             constructor: 0,
             fields: [],
