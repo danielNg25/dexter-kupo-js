@@ -24,6 +24,13 @@ function writeVyfinanceDataToFile(data, filePath) {
     // Write the structured data to a JSON file
     fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
 }
+function writeVyfinanceOrderAddressAsKeyToFile(data, filePath) {
+    const structuredData = {};
+    data.forEach((pool) => {
+        structuredData[pool.orderValidatorUtxoAddress] = pool;
+    });
+    fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
+}
 export class Vyfinance extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
@@ -109,37 +116,20 @@ export class Vyfinance extends BaseDex {
         // Ensure the file exists
         if (!fs.existsSync(filePath)) {
             const data = await this.allLiquidityPoolDatas();
-            writeVyfinanceDataToFile(data, filePath);
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
         }
         // Parse the structured data
         let structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        let pool = Vyfinance.findPoolDataByAddress(structuredData, validatorAddress);
-        if (!pool) {
+        if (!structuredData[validatorAddress]) {
             const data = await this.allLiquidityPoolDatas();
-            writeVyfinanceDataToFile(data, filePath);
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
             structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-            pool = Vyfinance.findPoolDataByAddress(structuredData, validatorAddress);
-            if (!pool) {
+            if (!structuredData[validatorAddress]) {
                 return undefined;
             }
         }
+        let pool = structuredData[validatorAddress];
         return retry(() => this.liquidityPoolFromPoolId(pool.poolNftPolicyId), 5, 100);
-    }
-    static findPoolDataByAddress(structuredData, givenAddress) {
-        // Iterate through the top-level keys
-        for (const tokenA in structuredData) {
-            for (const tokenB in structuredData[tokenA]) {
-                const pools = structuredData[tokenA][tokenB];
-                // Find the first matching pool
-                const matchedPool = pools.find((pool) => pool.orderValidatorUtxoAddress === givenAddress);
-                // Return immediately if a match is found
-                if (matchedPool) {
-                    return matchedPool;
-                }
-            }
-        }
-        // Return undefined if no match is found
-        return undefined;
     }
     async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, filePath) {
         tokenB = tokenB.split('.').join('');

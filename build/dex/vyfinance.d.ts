@@ -31,7 +31,6 @@ export declare class Vyfinance extends BaseDex {
     liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromValidatorAddress(validatorAddress: string, filePath: string): Promise<LiquidityPool | undefined>;
-    static findPoolDataByAddress(structuredData: Record<string, Record<string, Array<VyfinancePoolData>>>, givenAddress: string): VyfinancePoolData | undefined;
     liquidityPoolsFromToken(tokenB: string, tokenA: string | undefined, tokenBDecimals: number | undefined, tokenADecimals: number | undefined, filePath: string): Promise<Array<LiquidityPool> | undefined>;
     parseOrderDatum(datum: string): Promise<DatumParameters>;
     fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters>;

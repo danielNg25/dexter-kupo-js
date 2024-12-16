@@ -54,6 +54,18 @@ function writeVyfinanceDataToFile(
     fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
 }
 
+function writeVyfinanceOrderAddressAsKeyToFile(
+    data: VyfinancePoolData[],
+    filePath: string
+) {
+    const structuredData: Record<string, VyfinancePoolData> = {};
+    data.forEach((pool) => {
+        structuredData[pool.orderValidatorUtxoAddress] = pool;
+    });
+
+    fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
+}
+
 export class Vyfinance extends BaseDex {
     public readonly identifier: string = DEX_IDENTIFIERS.VYFINANCE;
 
@@ -194,34 +206,25 @@ export class Vyfinance extends BaseDex {
         // Ensure the file exists
         if (!fs.existsSync(filePath)) {
             const data = await this.allLiquidityPoolDatas();
-            writeVyfinanceDataToFile(data, filePath);
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
         }
 
         // Parse the structured data
-        let structuredData: Record<
-            string,
-            Record<string, Array<VyfinancePoolData>>
-        > = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
-        let pool = Vyfinance.findPoolDataByAddress(
-            structuredData,
-            validatorAddress
+        let structuredData: Record<string, VyfinancePoolData> = JSON.parse(
+            fs.readFileSync(filePath, 'utf8')
         );
 
-        if (!pool) {
+        if (!structuredData[validatorAddress]) {
             const data = await this.allLiquidityPoolDatas();
-            writeVyfinanceDataToFile(data, filePath);
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
             structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-            pool = Vyfinance.findPoolDataByAddress(
-                structuredData,
-                validatorAddress
-            );
-
-            if (!pool) {
+            if (!structuredData[validatorAddress]) {
                 return undefined;
             }
         }
+
+        let pool = structuredData[validatorAddress];
 
         return retry(
             () => this.liquidityPoolFromPoolId(pool.poolNftPolicyId),
@@ -230,33 +233,6 @@ export class Vyfinance extends BaseDex {
         );
     }
 
-    static findPoolDataByAddress(
-        structuredData: Record<
-            string,
-            Record<string, Array<VyfinancePoolData>>
-        >,
-        givenAddress: string
-    ): VyfinancePoolData | undefined {
-        // Iterate through the top-level keys
-        for (const tokenA in structuredData) {
-            for (const tokenB in structuredData[tokenA]) {
-                const pools = structuredData[tokenA][tokenB];
-
-                // Find the first matching pool
-                const matchedPool = pools.find(
-                    (pool) => pool.orderValidatorUtxoAddress === givenAddress
-                );
-
-                // Return immediately if a match is found
-                if (matchedPool) {
-                    return matchedPool;
-                }
-            }
-        }
-
-        // Return undefined if no match is found
-        return undefined;
-    }
     async liquidityPoolsFromToken(
         tokenB: string,
         tokenA: string = LOVELACE,
