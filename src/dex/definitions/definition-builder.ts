@@ -2,6 +2,7 @@ import { DatumParameters, DefinitionConstr, DefinitionField } from './types';
 import { DatumParameterKey } from './constants';
 import _ from 'lodash';
 import { datumJsonToCbor } from './utils';
+import * as fs from 'fs';
 
 export class DefinitionBuilder {
     private _definition!: DefinitionConstr;
@@ -169,7 +170,7 @@ export class DefinitionBuilder {
         }
 
         if (templateDefinition instanceof Array) {
-            templateDefinition
+            (definedDefinition as DefinitionField[])
                 .map((fieldParameter: DefinitionField, index: number) => {
                     return this.extractParameters(
                         fieldParameter,

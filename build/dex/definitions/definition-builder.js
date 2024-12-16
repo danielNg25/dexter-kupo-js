@@ -98,7 +98,7 @@ export class DefinitionBuilder {
             return foundParameters;
         }
         if (templateDefinition instanceof Array) {
-            templateDefinition
+            definedDefinition
                 .map((fieldParameter, index) => {
                 return this.extractParameters(fieldParameter, templateDefinition[index], foundParameters);
             })
