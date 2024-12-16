@@ -54,6 +54,18 @@ function writeVyfinanceDataToFile(
     fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
 }
 
+function writeVyfinanceOrderAddressAsKeyToFile(
+    data: VyfinancePoolData[],
+    filePath: string
+) {
+    const structuredData: Record<string, VyfinancePoolData> = {};
+    data.forEach((pool) => {
+        structuredData[pool.orderValidatorUtxoAddress] = pool;
+    });
+
+    fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
+}
+
 export class Vyfinance extends BaseDex {
     public readonly identifier: string = DEX_IDENTIFIERS.VYFINANCE;
 
@@ -185,6 +197,40 @@ export class Vyfinance extends BaseDex {
         }
 
         return this.liquidityPoolFromUtxoExtend(utxos[0], poolId);
+    }
+
+    async liquidityPoolFromValidatorAddress(
+        validatorAddress: string,
+        filePath: string
+    ): Promise<LiquidityPool | undefined> {
+        // Ensure the file exists
+        if (!fs.existsSync(filePath)) {
+            const data = await this.allLiquidityPoolDatas();
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
+        }
+
+        // Parse the structured data
+        let structuredData: Record<string, VyfinancePoolData> = JSON.parse(
+            fs.readFileSync(filePath, 'utf8')
+        );
+
+        if (!structuredData[validatorAddress]) {
+            const data = await this.allLiquidityPoolDatas();
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
+            structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+            if (!structuredData[validatorAddress]) {
+                return undefined;
+            }
+        }
+
+        let pool = structuredData[validatorAddress];
+
+        return retry(
+            () => this.liquidityPoolFromPoolId(pool.poolNftPolicyId),
+            5,
+            100
+        );
     }
 
     async liquidityPoolsFromToken(

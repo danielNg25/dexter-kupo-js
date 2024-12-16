@@ -13,6 +13,7 @@ export class LiquidityPool {
     poolId: string = '';
     identifier: string = '';
     poolFeePercent: number = 0;
+    poolLpTokens?: Token;
     totalLpTokens: bigint = 0n;
     extra: any = {};
 
@@ -24,7 +25,8 @@ export class LiquidityPool {
         reserveB: bigint,
         address: string,
         poolFeePercent: number,
-        poolId?: string
+        poolId?: string,
+        poolLpTokens?: Token
     ) {
         this.dex = dex;
         this.assetA = assetA;
@@ -34,6 +36,7 @@ export class LiquidityPool {
         this.address = address;
         this.poolFeePercent = poolFeePercent;
         this.poolId = poolId || '';
+        this.poolLpTokens = poolLpTokens;
     }
 
     get uuid(): string {

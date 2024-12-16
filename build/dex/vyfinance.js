@@ -24,6 +24,13 @@ function writeVyfinanceDataToFile(data, filePath) {
     // Write the structured data to a JSON file
     fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
 }
+function writeVyfinanceOrderAddressAsKeyToFile(data, filePath) {
+    const structuredData = {};
+    data.forEach((pool) => {
+        structuredData[pool.orderValidatorUtxoAddress] = pool;
+    });
+    fs.writeFileSync(filePath, JSON.stringify(structuredData, null, 2));
+}
 export class Vyfinance extends BaseDex {
     constructor(kupoApi) {
         super(kupoApi);
@@ -104,6 +111,25 @@ export class Vyfinance extends BaseDex {
             return Promise.resolve(undefined);
         }
         return this.liquidityPoolFromUtxoExtend(utxos[0], poolId);
+    }
+    async liquidityPoolFromValidatorAddress(validatorAddress, filePath) {
+        // Ensure the file exists
+        if (!fs.existsSync(filePath)) {
+            const data = await this.allLiquidityPoolDatas();
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
+        }
+        // Parse the structured data
+        let structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (!structuredData[validatorAddress]) {
+            const data = await this.allLiquidityPoolDatas();
+            writeVyfinanceOrderAddressAsKeyToFile(data, filePath);
+            structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            if (!structuredData[validatorAddress]) {
+                return undefined;
+            }
+        }
+        let pool = structuredData[validatorAddress];
+        return retry(() => this.liquidityPoolFromPoolId(pool.poolNftPolicyId), 5, 100);
     }
     async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, filePath) {
         tokenB = tokenB.split('.').join('');

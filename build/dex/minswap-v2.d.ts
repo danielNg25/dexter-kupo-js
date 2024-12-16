@@ -8,7 +8,6 @@ export declare class MinswapV2 extends BaseDex {
     /**
      * On-Chain constants.
      */
-    readonly marketOrderAddress: string;
     readonly lpTokenPolicyId: string;
     readonly poolValidityAsset: string;
     readonly orderScriptHash: string;
