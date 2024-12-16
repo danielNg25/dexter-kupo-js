@@ -112,6 +112,13 @@ export class Vyfinance extends BaseDex {
         }
         return this.liquidityPoolFromUtxoExtend(utxos[0], poolId);
     }
+    async liquidityPoolFromValidatorAddressMapping(validatorAddress, structuredData) {
+        if (!structuredData[validatorAddress]) {
+            return undefined;
+        }
+        let pool = structuredData[validatorAddress];
+        return retry(() => this.liquidityPoolFromPoolId(pool.poolNftPolicyId), 5, 100);
+    }
     async liquidityPoolFromValidatorAddress(validatorAddress, filePath) {
         // Ensure the file exists
         if (!fs.existsSync(filePath)) {

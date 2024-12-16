@@ -199,6 +199,23 @@ export class Vyfinance extends BaseDex {
         return this.liquidityPoolFromUtxoExtend(utxos[0], poolId);
     }
 
+    async liquidityPoolFromValidatorAddressMapping(
+        validatorAddress: string,
+        structuredData: Record<string, VyfinancePoolData>
+    ): Promise<LiquidityPool | undefined> {
+        if (!structuredData[validatorAddress]) {
+            return undefined;
+        }
+
+        let pool = structuredData[validatorAddress];
+
+        return retry(
+            () => this.liquidityPoolFromPoolId(pool.poolNftPolicyId),
+            5,
+            100
+        );
+    }
+
     async liquidityPoolFromValidatorAddress(
         validatorAddress: string,
         filePath: string
