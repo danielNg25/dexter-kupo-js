@@ -31,7 +31,7 @@ declare const _default: {
         })[];
         int?: undefined;
     } | {
-        constructor: number;
+        constructor: DatumParameterKey;
         fields: ({
             constructor: DatumParameterKey;
             fields: never[];
