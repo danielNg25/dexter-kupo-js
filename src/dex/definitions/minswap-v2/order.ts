@@ -96,7 +96,7 @@ export default {
             ],
         },
         {
-            constructor: 0,
+            constructor: DatumParameterKey.Action,
             fields: [
                 {
                     constructor: DatumParameterKey.Direction,

@@ -4,7 +4,6 @@ import { DefinitionBuilder } from '../definitions/definition-builder';
 import { DatumParameters, DefinitionConstr } from '../definitions/types';
 import { cborToDatumJson } from '../definitions/utils';
 import { LiquidityPool } from './liquidity-pool';
-
 export abstract class BaseDex {
     public kupoApi: KupoApi;
     public identifier!: string;

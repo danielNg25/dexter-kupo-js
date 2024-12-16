@@ -1,10 +1,10 @@
 import { KupoApi } from './KupoApi';
 import { BlockFrostAPI } from '@blockfrost/blockfrost-js';
-import { SundaeSwapV3 } from './dex/sundaeswap-v3';
+import { MinswapV2 } from './dex/minswap-v2';
 const url = 'https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/matches/addr1qyzk2jnlyklmcpjlaqt8r73uqmdkmq8jdl83uvgf6crnnqcjtcz8hchkwxt6s9afm7eqzlx4y4v5r93sl6eph6k9f54s24cyg5';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1443/');
-    const minswap = new SundaeSwapV3(kupo);
+    const minswap = new MinswapV2(kupo);
     const start = new Date().getTime();
     // minswap
     //     .liquidityPoolsFromToken(
@@ -26,7 +26,7 @@ const main = async () => {
     //         console.log(`Execution time: ${(end - start) / 1000}s`);
     //     });
     minswap
-        .fetchAndParseOrderDatum('72aea92e9ac8b490cc4adab80cd72c29c9132e69f87193aaa51b2fd857e5894d')
+        .fetchAndParseOrderDatum('a5329e70fb183ed84450628aad33f13a0df48462c85859d35d9c890cda4ca91d')
         .then((values) => {
         const end = new Date().getTime();
         console.log(values);
