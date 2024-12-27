@@ -31,7 +31,8 @@ export abstract class BaseDex {
         tokenA: string,
         tokenBDecimals: number,
         tokenADecimals: number,
-        allLiquidityPools: any
+        allLiquidityPools: any,
+        skipRefetch?: boolean
     ): Promise<Array<LiquidityPool> | undefined>;
 
     abstract parseOrderDatum(datum: string): Promise<DatumParameters>;
