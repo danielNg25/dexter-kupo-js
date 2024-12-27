@@ -138,7 +138,7 @@ export class Vyfinance extends BaseDex {
         let pool = structuredData[validatorAddress];
         return retry(() => this.liquidityPoolFromPoolId(pool.poolNftPolicyId), 5, 100);
     }
-    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, filePath) {
+    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, filePath, skipRefetch = false) {
         tokenB = tokenB.split('.').join('');
         tokenA = tokenA.split('.').join('');
         // Ensure the file exists
@@ -152,6 +152,9 @@ export class Vyfinance extends BaseDex {
         const tokenBData = structuredData[tokenB] || {};
         const tokenAData = structuredData[tokenA] || {};
         if (!tokenBData[tokenA] && !tokenAData[tokenB]) {
+            if (skipRefetch) {
+                return undefined;
+            }
             const data = await this.allLiquidityPoolDatas();
             writeVyfinanceDataToFile(data, filePath);
             structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));

@@ -8,7 +8,3 @@ export type AddressInfo = {
     type: 'byron' | 'shelley'; // Address era
     script: boolean; // True if this is a script address
 };
-
-export type AddressUtxo = {
-    
-}

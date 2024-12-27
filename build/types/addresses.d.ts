@@ -8,4 +8,3 @@ export type AddressInfo = {
     type: 'byron' | 'shelley';
     script: boolean;
 };
-export type AddressUtxo = {};

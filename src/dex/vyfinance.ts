@@ -255,7 +255,8 @@ export class Vyfinance extends BaseDex {
         tokenA: string = LOVELACE,
         tokenBDecimals: number = 0,
         tokenADecimals: number = 6,
-        filePath: string
+        filePath: string,
+        skipRefetch: boolean = false
     ): Promise<Array<LiquidityPool> | undefined> {
         tokenB = tokenB.split('.').join('');
         tokenA = tokenA.split('.').join('');
@@ -277,6 +278,9 @@ export class Vyfinance extends BaseDex {
         const tokenAData = structuredData[tokenA] || {};
 
         if (!tokenBData[tokenA] && !tokenAData[tokenB]) {
+            if (skipRefetch) {
+                return undefined;
+            }
             const data = await this.allLiquidityPoolDatas();
             writeVyfinanceDataToFile(data, filePath);
             structuredData = JSON.parse(fs.readFileSync(filePath, 'utf8'));

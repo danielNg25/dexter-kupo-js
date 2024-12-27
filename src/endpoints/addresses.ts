@@ -1,6 +1,6 @@
 import { KupoApi } from '../KupoApi';
-import { AddressInfo, Unit, KupoTypes, UTXO } from '../types';
-import { isShellyAddress, joinPolicyId, LOVELACE } from '../utils';
+import { AddressInfo, Unit, UTXO } from '../types';
+import { isShellyAddress } from '../utils';
 import { handleError } from '../utils/errors';
 
 export async function addresses(

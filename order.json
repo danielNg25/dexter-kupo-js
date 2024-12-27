@@ -1,0 +1,124 @@
+{
+  "constructor": 0,
+  "fields": [
+    {
+      "constructor": 0,
+      "fields": [
+        {
+          "bytes": "6f0ef193495ab39e1685c3ed2eb4b855ec143a2146cd779eac2b1e02"
+        }
+      ]
+    },
+    {
+      "constructor": 0,
+      "fields": [
+        {
+          "constructor": 0,
+          "fields": [
+            {
+              "bytes": "6f0ef193495ab39e1685c3ed2eb4b855ec143a2146cd779eac2b1e02"
+            }
+          ]
+        },
+        {
+          "constructor": 0,
+          "fields": [
+            {
+              "constructor": 0,
+              "fields": [
+                {
+                  "constructor": 0,
+                  "fields": [
+                    {
+                      "bytes": "46f23a6d49167127e65d80caf537d01cdf544a39a8bca9d1fc5bdc82"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "constructor": 0,
+      "fields": []
+    },
+    {
+      "constructor": 0,
+      "fields": [
+        {
+          "constructor": 0,
+          "fields": [
+            {
+              "bytes": "6f0ef193495ab39e1685c3ed2eb4b855ec143a2146cd779eac2b1e02"
+            }
+          ]
+        },
+        {
+          "constructor": 0,
+          "fields": [
+            {
+              "constructor": 0,
+              "fields": [
+                {
+                  "constructor": 0,
+                  "fields": [
+                    {
+                      "bytes": "46f23a6d49167127e65d80caf537d01cdf544a39a8bca9d1fc5bdc82"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "constructor": 0,
+      "fields": []
+    },
+    {
+      "constructor": 0,
+      "fields": [
+        {
+          "bytes": "f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c"
+        },
+        {
+          "bytes": "dec347c549f618e80d97682b5b4c6985256503bbb3f3955831f5679cdb8de72f"
+        }
+      ]
+    },
+    {
+      "constructor": 5,
+      "fields": [
+        {
+          "constructor": 0,
+          "fields": [
+            {
+              "int": "58740"
+            }
+          ]
+        },
+        {
+          "int": "37208329"
+        },
+        {
+          "int": "819189487"
+        },
+        {
+          "constructor": 0,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "int": "1500000"
+    },
+    {
+      "constructor": 1,
+      "fields": []
+    }
+  ]
+}
