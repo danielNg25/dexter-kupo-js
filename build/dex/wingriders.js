@@ -111,7 +111,7 @@ export class WingRiders extends BaseDex {
         }
         return this.liquidityPoolFromUtxoExtend(foundUtxo, poolId);
     }
-    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, allLiquidityPools = []) {
+    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, allLiquidityPools = [], skipRefetch) {
         allLiquidityPools =
             allLiquidityPools.length > 0
                 ? allLiquidityPools

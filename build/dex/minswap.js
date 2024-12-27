@@ -71,7 +71,7 @@ export class Minswap extends BaseDex {
         }
         return this.liquidityPoolFromUtxoExtend(utxos[0], poolId);
     }
-    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, allLiquidityPools = []) {
+    async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, allLiquidityPools = [], skipRefetch) {
         allLiquidityPools =
             allLiquidityPools.length > 0
                 ? allLiquidityPools

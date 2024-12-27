@@ -187,7 +187,8 @@ export class WingRiders extends BaseDex {
         tokenA: string = LOVELACE,
         tokenBDecimals: number = 0,
         tokenADecimals: number = 6,
-        allLiquidityPools: LiquidityPool[] = []
+        allLiquidityPools: LiquidityPool[] = [],
+        skipRefetch?: boolean
     ): Promise<Array<LiquidityPool> | undefined> {
         allLiquidityPools =
             allLiquidityPools.length > 0
