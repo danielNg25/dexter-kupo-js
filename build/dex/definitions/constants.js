@@ -17,6 +17,14 @@ export var DatumParameterKey;
     DatumParameterKey["BScale"] = "BScale";
     DatumParameterKey["WingRidersV2Special"] = "WingRidersV2Special";
     /**
+     * Stable Pool specific
+     */
+    DatumParameterKey["Balance0"] = "Balance0";
+    DatumParameterKey["Balance1"] = "Balance1";
+    DatumParameterKey["TotalLiquidity"] = "TotalLiquidity";
+    DatumParameterKey["AmplificationCoefficient"] = "AmplificationCoefficient";
+    DatumParameterKey["OrderHash"] = "OrderHash";
+    /**
      * Swap/wallet info.
      */
     DatumParameterKey["SenderPubKeyHash"] = "SenderPubKeyHash";

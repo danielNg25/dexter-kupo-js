@@ -9,6 +9,7 @@ export var DEX_IDENTIFIERS;
     DEX_IDENTIFIERS["WINGRIDERV2"] = "WingRiderV2";
     DEX_IDENTIFIERS["VYFINANCE"] = "VyFinance";
     DEX_IDENTIFIERS["MUESLISWAP"] = "MuesliSwap";
+    DEX_IDENTIFIERS["MINSWAPSTABLE"] = "MinswapStable";
 })(DEX_IDENTIFIERS || (DEX_IDENTIFIERS = {}));
 // Function to structure and write data to a JSON file
 export function writeDataToFile(data, filePath) {

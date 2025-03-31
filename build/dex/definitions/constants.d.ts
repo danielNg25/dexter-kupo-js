@@ -15,6 +15,14 @@ export declare enum DatumParameterKey {
     BScale = "BScale",
     WingRidersV2Special = "WingRidersV2Special",
     /**
+     * Stable Pool specific
+     */
+    Balance0 = "Balance0",
+    Balance1 = "Balance1",
+    TotalLiquidity = "TotalLiquidity",
+    AmplificationCoefficient = "AmplificationCoefficient",
+    OrderHash = "OrderHash",
+    /**
      * Swap/wallet info.
      */
     SenderPubKeyHash = "SenderPubKeyHash",
