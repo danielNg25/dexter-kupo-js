@@ -71,7 +71,7 @@ export function cborToDatumJson(raw: string): any {
             for (let i = 0; i < l.len(); i++) {
                 deserializedList.push(deserializeToJson(l.get(i)));
             }
-            return deserializedList;
+            return { list: deserializedList };
         } else if (data.kind() === 3) {
             // Integer type
             return {
