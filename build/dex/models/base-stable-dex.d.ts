@@ -8,9 +8,9 @@ export declare abstract class BaseStableDex {
     /**
      * Craft liquidity pool state from a valid UTxO.
      */
-    abstract liquidityPoolFromUtxoExtend(utxo: UTXO, assetList: string[], poolId: string): Promise<StablePool | undefined>;
+    abstract liquidityPoolFromUtxoExtend(utxo: UTXO, assetList: string[], decimals: number[], poolId: string): Promise<StablePool | undefined>;
     /**
      * Craft liquidity pool state from a pool id.
      */
-    abstract liquidityPoolFromPoolId(poolId: string, assetList: string[]): Promise<StablePool | undefined>;
+    abstract liquidityPoolFromPoolId(poolId: string, assetList: string[], decimals: number[]): Promise<StablePool | undefined>;
 }

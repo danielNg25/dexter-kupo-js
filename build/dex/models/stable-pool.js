@@ -55,7 +55,7 @@ export class StablePool {
             const liquidityPool = await this.dex.liquidityPoolFromPoolId(this.poolId, [
                 this.assetA.identifier(''),
                 this.assetB.identifier(''),
-            ]);
+            ], [6, 6]);
             if (!liquidityPool)
                 throw Error(`Error updating reserves ${this.dex.identifier} - ${this.poolId}`);
             this.reserveA = liquidityPool.reserveA;

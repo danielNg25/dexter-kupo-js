@@ -17,6 +17,7 @@ export abstract class BaseStableDex {
     abstract liquidityPoolFromUtxoExtend(
         utxo: UTXO,
         assetList: string[],
+        decimals: number[],
         poolId: string
     ): Promise<StablePool | undefined>;
 
@@ -25,6 +26,7 @@ export abstract class BaseStableDex {
      */
     abstract liquidityPoolFromPoolId(
         poolId: string,
-        assetList: string[]
+        assetList: string[],
+        decimals: number[]
     ): Promise<StablePool | undefined>;
 }

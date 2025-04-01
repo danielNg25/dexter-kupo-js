@@ -40,14 +40,15 @@ const main = async () => {
             [
                 '8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344',
                 'f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344',
-            ]
+            ],
+            [6, 6]
         )
         .then((values) => {
             const end = new Date().getTime();
             console.log(values);
             console.log(`Execution time: ${(end - start) / 1000}s`);
         });
-    
+
     const minswap = new SundaeSwapV3(kupo);
 
     // minswap

@@ -10,7 +10,7 @@ export class MinswapStable extends BaseStableDex {
         super(kupoApi);
         this.identifier = DEX_IDENTIFIERS.MINSWAPSTABLE;
     }
-    async liquidityPoolFromUtxoExtend(utxo, assetList, poolId) {
+    async liquidityPoolFromUtxoExtend(utxo, assetList, decimals, poolId) {
         if (!utxo.data_hash) {
             return Promise.resolve(undefined);
         }
@@ -19,7 +19,7 @@ export class MinswapStable extends BaseStableDex {
             let jsonDatum = cborToDatumJson(datum);
             const builder = await new DefinitionBuilder().loadDefinition(stablePool);
             const parameters = builder.pullParameters(jsonDatum);
-            const pool = new StablePool(this, identifierToAsset(assetList[0]), identifierToAsset(assetList[1]), BigInt(parameters.Balance0), BigInt(parameters.Balance1), poolId, 0.1, // Standard fee for Minswap stable pools
+            const pool = new StablePool(this, identifierToAsset(assetList[0], decimals[0]), identifierToAsset(assetList[1], decimals[1]), BigInt(parameters.Balance0), BigInt(parameters.Balance1), poolId, 0.1, // Standard fee for Minswap stable pools
             BigInt(parameters.AmplificationCoefficient), BigInt(parameters.TotalLiquidity), poolId);
             return pool;
         }
@@ -27,11 +27,11 @@ export class MinswapStable extends BaseStableDex {
             throw new Error(`Failed parsing datum for stable pool ${utxo.address}`);
         }
     }
-    async liquidityPoolFromPoolId(poolId, assetList) {
+    async liquidityPoolFromPoolId(poolId, assetList, decimals) {
         const utxos = await this.kupoApi.get(poolId, true);
         if (utxos.length === 0) {
             return Promise.resolve(undefined);
         }
-        return this.liquidityPoolFromUtxoExtend(utxos[0], assetList, poolId);
+        return this.liquidityPoolFromUtxoExtend(utxos[0], assetList, decimals, poolId);
     }
 }

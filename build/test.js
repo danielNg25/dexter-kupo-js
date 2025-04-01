@@ -16,7 +16,7 @@ const main = async () => {
         .liquidityPoolFromPoolId('addr1wy7kkcpuf39tusnnyga5t2zcul65dwx9yqzg7sep3cjscesx2q5m5', [
         '8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344',
         'f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344',
-    ])
+    ], [6, 6])
         .then((values) => {
         const end = new Date().getTime();
         console.log(values);

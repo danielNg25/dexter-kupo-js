@@ -26,6 +26,7 @@ export class MinswapStable extends BaseStableDex {
     async liquidityPoolFromUtxoExtend(
         utxo: UTXO,
         assetList: string[],
+        decimals: number[],
         poolId: string
     ): Promise<StablePool | undefined> {
         if (!utxo.data_hash) {
@@ -45,8 +46,8 @@ export class MinswapStable extends BaseStableDex {
 
             const pool: StablePool = new StablePool(
                 this,
-                identifierToAsset(assetList[0]),
-                identifierToAsset(assetList[1]),
+                identifierToAsset(assetList[0], decimals[0]),
+                identifierToAsset(assetList[1], decimals[1]),
                 BigInt(parameters.Balance0!),
                 BigInt(parameters.Balance1!),
                 poolId,
@@ -66,7 +67,8 @@ export class MinswapStable extends BaseStableDex {
 
     async liquidityPoolFromPoolId(
         poolId: string,
-        assetList: string[]
+        assetList: string[],
+        decimals: number[]
     ): Promise<StablePool | undefined> {
         const utxos = await this.kupoApi.get(poolId, true);
 
@@ -74,6 +76,11 @@ export class MinswapStable extends BaseStableDex {
             return Promise.resolve(undefined);
         }
 
-        return this.liquidityPoolFromUtxoExtend(utxos[0], assetList, poolId);
+        return this.liquidityPoolFromUtxoExtend(
+            utxos[0],
+            assetList,
+            decimals,
+            poolId
+        );
     }
 }

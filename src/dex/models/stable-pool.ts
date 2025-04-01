@@ -97,7 +97,8 @@ export class StablePool {
                 [
                     (this.assetA as Asset).identifier(''),
                     (this.assetB as Asset).identifier(''),
-                ]
+                ],
+                [6, 6]
             );
             if (!liquidityPool)
                 throw Error(
