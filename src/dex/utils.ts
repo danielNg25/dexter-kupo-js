@@ -10,6 +10,7 @@ export enum DEX_IDENTIFIERS {
     VYFINANCE = 'VyFinance',
     MUESLISWAP = 'MuesliSwap',
     MINSWAPSTABLE = 'MinswapStable',
+    CSWAP = 'CSwap',
 }
 
 export type PoolData = {

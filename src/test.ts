@@ -23,6 +23,7 @@ import { Asset } from './models';
 import { compareTokenWithPolicy, fetchAssetMetadata, LOVELACE } from './utils';
 import { Cardano } from '@cardano-sdk/core';
 import { MinswapStable } from './dex/minswap-stable';
+import { CSwap } from './dex/cswap';
 
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1443/');
@@ -32,34 +33,35 @@ const main = async () => {
     // );
     // );
 
-    const minswapStable = new MinswapStable(kupo);
-    const start = new Date().getTime();
-    minswapStable
-        .liquidityPoolFromPoolId(
-            'addr1wy7kkcpuf39tusnnyga5t2zcul65dwx9yqzg7sep3cjscesx2q5m5',
-            [
-                '8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344',
-                'f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344',
-            ],
-            [6, 6]
-        )
-        .then((values) => {
-            const end = new Date().getTime();
-            console.log(values);
-            console.log(`Execution time: ${(end - start) / 1000}s`);
-        });
-
-    const minswap = new SundaeSwapV3(kupo);
-
-    // minswap
-    //     .liquidityPoolsFromToken(
-    //         'f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344',
+    // const minswapStable = new MinswapStable(kupo);
+    // const start = new Date().getTime();
+    // minswapStable
+    //     .liquidityPoolFromPoolId(
+    //         'addr1wy7kkcpuf39tusnnyga5t2zcul65dwx9yqzg7sep3cjscesx2q5m5',
+    //         [
+    //             '8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344',
+    //             'f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344',
+    //         ],
+    //         [6, 6]
     //     )
     //     .then((values) => {
     //         const end = new Date().getTime();
     //         console.log(values);
     //         console.log(`Execution time: ${(end - start) / 1000}s`);
     //     });
+
+    const cswap = new CSwap(kupo);
+
+    cswap
+        .liquidityPoolsFromToken(
+            '95a427e384527065f2f8946f5e86320d0117839a5e98ea2c0b55fb0048554e54',
+            'lovelace'
+        )
+        .then((values) => {
+            const end = new Date().getTime();
+            console.log(values);
+            console.log(values?.length);
+        });
     // minswap
     //     .liquidityPoolFromPoolId(
     //         'e0302560ced2fdcbfcb2602697df970cd0d6a38f94b32703f51c312b000de140865c2402b4b4fa28357c91ce0bd0ef409b49cb7a312be852675cf2d5'

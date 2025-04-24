@@ -7,7 +7,8 @@ export declare enum DEX_IDENTIFIERS {
     WINGRIDERV2 = "WingRiderV2",
     VYFINANCE = "VyFinance",
     MUESLISWAP = "MuesliSwap",
-    MINSWAPSTABLE = "MinswapStable"
+    MINSWAPSTABLE = "MinswapStable",
+    CSWAP = "CSwap"
 }
 export type PoolData = {
     tokenA: string;
