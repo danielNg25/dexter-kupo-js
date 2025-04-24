@@ -25,6 +25,13 @@ export var DatumParameterKey;
     DatumParameterKey["AmplificationCoefficient"] = "AmplificationCoefficient";
     DatumParameterKey["OrderHash"] = "OrderHash";
     /**
+     * Chadswap specific
+     */
+    DatumParameterKey["FilledAmount"] = "FilledAmount";
+    DatumParameterKey["RemainingAmount"] = "RemainingAmount";
+    DatumParameterKey["UnitPrice"] = "UnitPrice";
+    DatumParameterKey["UnitPriceDenominator"] = "UnitPriceDenominator";
+    /**
      * Swap/wallet info.
      */
     DatumParameterKey["SenderPubKeyHash"] = "SenderPubKeyHash";

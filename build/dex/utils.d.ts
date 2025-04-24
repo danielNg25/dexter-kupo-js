@@ -1,4 +1,5 @@
 export declare enum DEX_IDENTIFIERS {
+    CHADSWAP = "ChadSwap",
     MINSWAP = "Minswap",
     MINSWAPV2 = "MinswapV2",
     SUNDAESWAPV1 = "SundaeSwapV1",

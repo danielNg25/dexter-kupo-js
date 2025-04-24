@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 export var DEX_IDENTIFIERS;
 (function (DEX_IDENTIFIERS) {
+    DEX_IDENTIFIERS["CHADSWAP"] = "ChadSwap";
     DEX_IDENTIFIERS["MINSWAP"] = "Minswap";
     DEX_IDENTIFIERS["MINSWAPV2"] = "MinswapV2";
     DEX_IDENTIFIERS["SUNDAESWAPV1"] = "SundaeSwapV1";

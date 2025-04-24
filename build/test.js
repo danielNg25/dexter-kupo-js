@@ -1,9 +1,15 @@
 import { KupoApi } from './KupoApi';
 import { BlockFrostAPI } from '@blockfrost/blockfrost-js';
 const url = 'https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/matches/addr1qyzk2jnlyklmcpjlaqt8r73uqmdkmq8jdl83uvgf6crnnqcjtcz8hchkwxt6s9afm7eqzlx4y4v5r93sl6eph6k9f54s24cyg5';
-import { CSwap } from './dex/cswap';
+import { ChadSwap } from './dex/chadswap';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1443/');
+    const chadswap = new ChadSwap(kupo);
+    chadswap
+        .getOrdersByAsset('97075bf380e65f3c63fb733267adbb7d42eec574428a754d2abca55b436861726c6573207468652043686164')
+        .then((orders) => {
+        console.log(orders);
+    });
     // console.log(
     // await kupo.get(
     //     'addr1wxn9efv2f6w82hagxqtn62ju4m293tqvw0uhmdl64ch8uwc0h43gt'
@@ -25,14 +31,17 @@ const main = async () => {
     //         console.log(values);
     //         console.log(`Execution time: ${(end - start) / 1000}s`);
     //     });
-    const cswap = new CSwap(kupo);
-    cswap
-        .liquidityPoolsFromToken('95a427e384527065f2f8946f5e86320d0117839a5e98ea2c0b55fb0048554e54', 'lovelace')
-        .then((values) => {
-        const end = new Date().getTime();
-        console.log(values);
-        console.log(values?.length);
-    });
+    // const cswap = new CSwap(kupo);
+    // cswap
+    //     .liquidityPoolsFromToken(
+    //         '95a427e384527065f2f8946f5e86320d0117839a5e98ea2c0b55fb0048554e54',
+    //         'lovelace'
+    //     )
+    //     .then((values) => {
+    //         const end = new Date().getTime();
+    //         console.log(values);
+    //         console.log(values?.length);
+    //     });
     // minswap
     //     .liquidityPoolFromPoolId(
     //         'e0302560ced2fdcbfcb2602697df970cd0d6a38f94b32703f51c312b000de140865c2402b4b4fa28357c91ce0bd0ef409b49cb7a312be852675cf2d5'

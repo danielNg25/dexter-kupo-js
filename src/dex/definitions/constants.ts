@@ -26,6 +26,14 @@ export enum DatumParameterKey {
     OrderHash = 'OrderHash',
 
     /**
+     * Chadswap specific
+     */
+    FilledAmount = 'FilledAmount',
+    RemainingAmount = 'RemainingAmount',
+    UnitPrice = 'UnitPrice',
+    UnitPriceDenominator = 'UnitPriceDenominator',
+
+    /**
      * Swap/wallet info.
      */
     SenderPubKeyHash = 'SenderPubKeyHash',
