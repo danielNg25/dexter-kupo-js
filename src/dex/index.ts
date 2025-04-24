@@ -7,4 +7,5 @@ export * from './sundaeswap-v3';
 export * from './vyfinance';
 export * from './wingriders';
 export * from './wingriders-v2';
+export * from './cswap';
 export * from './utils';
