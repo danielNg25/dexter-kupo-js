@@ -61,11 +61,11 @@ const main = async () => {
     //         console.log(`Execution time: ${(end - start) / 1000}s`);
     //     });
 
-    const cswap = new CSwap(kupo);
+    const cswap = new SundaeSwapV3(kupo);
 
     cswap
         .liquidityPoolsFromToken(
-            '95a427e384527065f2f8946f5e86320d0117839a5e98ea2c0b55fb0048554e54',
+            '285b65ae63d4fad36321384ec61edfd5187b8194fff89b5abe9876da414e47454c53',
             'lovelace'
         )
         .then((values) => {

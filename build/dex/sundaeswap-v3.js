@@ -15,6 +15,7 @@ export class SundaeSwapV3 extends BaseDex {
          * On-Chain constants.
          */
         this.poolAddress = 'addr1x8srqftqemf0mjlukfszd97ljuxdp44r372txfcr75wrz26rnxqnmtv3hdu2t6chcfhl2zzjh36a87nmd6dwsu3jenqsslnz7e';
+        this.poolAddressV2 = 'addr1z8srqftqemf0mjlukfszd97ljuxdp44r372txfcr75wrz2auzrlrz2kdd83wzt9u9n9qt2swgvhrmmn96k55nq6yuj4qw992w9';
         this.lpTokenPolicyId = 'e0302560ced2fdcbfcb2602697df970cd0d6a38f94b32703f51c312b';
         this.cancelDatum = 'd87a80';
         this.orderScriptHash = 'fa6a58bbe2d0ff05534431c8e2f0ef2cbdc1602a8456e4b13c8f3077';
@@ -34,7 +35,15 @@ export class SundaeSwapV3 extends BaseDex {
         return pools;
     }
     async allLiquidityPoolUtxos() {
+        const utxos = await this.allLiquidityPoolUtxosV1();
+        const utxosV2 = await this.allLiquidityPoolUtxosV2();
+        return [...utxos, ...utxosV2];
+    }
+    async allLiquidityPoolUtxosV1() {
         return await this.kupoApi.get(this.poolAddress, true);
+    }
+    async allLiquidityPoolUtxosV2() {
+        return await this.kupoApi.get(this.poolAddressV2, true);
     }
     async liquidityPoolFromUtxo(utxo, poolId = '') {
         if (!utxo.data_hash) {

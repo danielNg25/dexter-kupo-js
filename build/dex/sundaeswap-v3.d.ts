@@ -9,6 +9,7 @@ export declare class SundaeSwapV3 extends BaseDex {
      * On-Chain constants.
      */
     readonly poolAddress: string;
+    readonly poolAddressV2: string;
     readonly lpTokenPolicyId: string;
     readonly cancelDatum: string;
     readonly orderScriptHash: string;
@@ -19,6 +20,8 @@ export declare class SundaeSwapV3 extends BaseDex {
     constructor(kupoApi: KupoApi);
     allLiquidityPools(): Promise<LiquidityPool[]>;
     allLiquidityPoolUtxos(): Promise<UTXO[]>;
+    allLiquidityPoolUtxosV1(): Promise<UTXO[]>;
+    allLiquidityPoolUtxosV2(): Promise<UTXO[]>;
     liquidityPoolFromUtxo(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;

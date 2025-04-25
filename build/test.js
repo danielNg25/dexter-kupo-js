@@ -1,7 +1,7 @@
 import { KupoApi } from './KupoApi';
 import { BlockFrostAPI } from '@blockfrost/blockfrost-js';
+import { SundaeSwapV3 } from './dex/sundaeswap-v3';
 const url = 'https://kupo1v6ejr4q6j469x2x87ze.mainnet-v2.kupo-m1.demeter.run/matches/addr1qyzk2jnlyklmcpjlaqt8r73uqmdkmq8jdl83uvgf6crnnqcjtcz8hchkwxt6s9afm7eqzlx4y4v5r93sl6eph6k9f54s24cyg5';
-import { CSwap } from './dex/cswap';
 const main = async () => {
     const kupo = new KupoApi('http://192.168.0.104:1443/');
     // const chadswap = new ChadSwap(kupo);
@@ -33,9 +33,9 @@ const main = async () => {
     //         console.log(values);
     //         console.log(`Execution time: ${(end - start) / 1000}s`);
     //     });
-    const cswap = new CSwap(kupo);
+    const cswap = new SundaeSwapV3(kupo);
     cswap
-        .liquidityPoolsFromToken('95a427e384527065f2f8946f5e86320d0117839a5e98ea2c0b55fb0048554e54', 'lovelace')
+        .liquidityPoolsFromToken('285b65ae63d4fad36321384ec61edfd5187b8194fff89b5abe9876da414e47454c53', 'lovelace')
         .then((values) => {
         const end = new Date().getTime();
         console.log(values);

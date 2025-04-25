@@ -24,6 +24,8 @@ export class SundaeSwapV3 extends BaseDex {
      */
     public readonly poolAddress: string =
         'addr1x8srqftqemf0mjlukfszd97ljuxdp44r372txfcr75wrz26rnxqnmtv3hdu2t6chcfhl2zzjh36a87nmd6dwsu3jenqsslnz7e';
+    public readonly poolAddressV2: string =
+        'addr1z8srqftqemf0mjlukfszd97ljuxdp44r372txfcr75wrz2auzrlrz2kdd83wzt9u9n9qt2swgvhrmmn96k55nq6yuj4qw992w9';
     public readonly lpTokenPolicyId: string =
         'e0302560ced2fdcbfcb2602697df970cd0d6a38f94b32703f51c312b';
     public readonly cancelDatum: string = 'd87a80';
@@ -40,7 +42,6 @@ export class SundaeSwapV3 extends BaseDex {
 
     async allLiquidityPools(): Promise<LiquidityPool[]> {
         const utxos = await this.allLiquidityPoolUtxos();
-
         let pools: LiquidityPool[] = [];
         utxos.map(async (utxo) => {
             const pool = await this.liquidityPoolFromUtxo(utxo);
@@ -51,7 +52,17 @@ export class SundaeSwapV3 extends BaseDex {
     }
 
     async allLiquidityPoolUtxos(): Promise<UTXO[]> {
+        const utxos = await this.allLiquidityPoolUtxosV1();
+        const utxosV2 = await this.allLiquidityPoolUtxosV2();
+        return [...utxos, ...utxosV2];
+    }
+
+    async allLiquidityPoolUtxosV1(): Promise<UTXO[]> {
         return await this.kupoApi.get(this.poolAddress, true);
+    }
+
+    async allLiquidityPoolUtxosV2(): Promise<UTXO[]> {
+        return await this.kupoApi.get(this.poolAddressV2, true);
     }
 
     async liquidityPoolFromUtxo(
