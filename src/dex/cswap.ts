@@ -118,9 +118,7 @@ export class CSwap extends BaseDex {
                 jsonDatum as DefinitionConstr
             );
 
-            let fee = Number(parameters.LpFee);
-
-            liquidityPool.poolFeePercent = fee == 85 ? 1 : fee == 135 ? 1.5 : 3; // 285 == 3;
+            liquidityPool.poolFeePercent = Number(parameters.LpFee) / 100;
         } catch (e) {
             throw new Error(`Failed parsing datum for liquidity pool ${e} `);
         }
