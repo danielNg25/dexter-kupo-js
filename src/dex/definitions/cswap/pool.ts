@@ -11,7 +11,7 @@ export default {
             int: DatumParameterKey.TotalLpTokens,
         },
         {
-            int: DatumParameterKey.RootKLast,
+            int: DatumParameterKey.LpFee,
         },
         {
             bytes: DatumParameterKey.PoolAssetAPolicyId,

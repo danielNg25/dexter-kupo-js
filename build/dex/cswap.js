@@ -1,5 +1,7 @@
 import { compareTokenWithPolicy, identifierToAsset, LOVELACE, retry, } from '../utils';
-import order from './definitions/sundaeswap-v1/order';
+import { DefinitionBuilder } from './definitions/definition-builder';
+import pool from './definitions/cswap/pool';
+import { cborToDatumJson } from './definitions/utils';
 import { BaseDex } from './models/base-dex';
 import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
@@ -60,9 +62,23 @@ export class CSwap extends BaseDex {
     }
     async liquidityPoolFromUtxoExtend(utxo, poolId = '') {
         let liquidityPool = await this.liquidityPoolFromUtxo(utxo, poolId);
+        if (!liquidityPool) {
+            return Promise.resolve(undefined);
+        }
+        try {
+            const datum = await this.kupoApi.datum(utxo.data_hash);
+            let jsonDatum = cborToDatumJson(datum);
+            const builder = await new DefinitionBuilder().loadDefinition(pool);
+            const parameters = builder.pullParameters(jsonDatum);
+            let fee = Number(parameters.LpFee);
+            liquidityPool.poolFeePercent = fee == 85 ? 1 : fee == 135 ? 1.5 : 3; // 285 == 3;
+        }
+        catch (e) {
+            throw new Error(`Failed parsing datum for liquidity pool ${e} `);
+        }
         return liquidityPool;
     }
-    async liquidityPoolFromPoolId(poolId) {
+    async liquidityPoolFromPoolId(poolId, initial = false) {
         const utxos = await this.allLiquidityPoolUtxos();
         let foundUtxo = utxos.find((utxo) => {
             return utxo.amount.map((amount) => amount.unit).includes(poolId);
@@ -70,7 +86,9 @@ export class CSwap extends BaseDex {
         if (!foundUtxo) {
             return Promise.resolve(undefined);
         }
-        return this.liquidityPoolFromUtxoExtend(foundUtxo, poolId);
+        return initial
+            ? this.liquidityPoolFromUtxoExtend(foundUtxo, poolId)
+            : this.liquidityPoolFromUtxo(foundUtxo, poolId);
     }
     async liquidityPoolsFromToken(tokenB, tokenA = LOVELACE, tokenBDecimals = 0, tokenADecimals = 6, allLiquidityPools = [], skipRefetch) {
         allLiquidityPools =
@@ -86,7 +104,7 @@ export class CSwap extends BaseDex {
         if (pools.length === 0) {
             return Promise.resolve(undefined);
         }
-        return (await Promise.all(pools.map((pool) => retry(() => this.liquidityPoolFromPoolId(pool.poolId), 5, 100))))
+        return (await Promise.all(pools.map((pool) => retry(() => this.liquidityPoolFromPoolId(pool.poolId, true), 5, 100))))
             .filter((pool) => pool !== undefined) // Type guard for filtering
             .map((pool) => {
             const setDecimals = (asset) => {
@@ -102,7 +120,7 @@ export class CSwap extends BaseDex {
         });
     }
     async parseOrderDatum(datum) {
-        return this._parseOrderDatum(datum, order);
+        return this._parseOrderDatum(datum, pool);
     }
     async fetchAndParseOrderDatum(datumHash) {
         const datum = await this.kupoApi.datum(datumHash);

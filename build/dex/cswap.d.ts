@@ -21,7 +21,7 @@ export declare class CSwap extends BaseDex {
     allLiquidityPoolUtxos(): Promise<UTXO[]>;
     liquidityPoolFromUtxo(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
     liquidityPoolFromUtxoExtend(utxo: UTXO, poolId?: string): Promise<LiquidityPool | undefined>;
-    liquidityPoolFromPoolId(poolId: string): Promise<LiquidityPool | undefined>;
+    liquidityPoolFromPoolId(poolId: string, initial?: boolean): Promise<LiquidityPool | undefined>;
     liquidityPoolsFromToken(tokenB: string, tokenA?: string, tokenBDecimals?: number, tokenADecimals?: number, allLiquidityPools?: LiquidityPool[], skipRefetch?: boolean): Promise<Array<LiquidityPool> | undefined>;
     parseOrderDatum(datum: string): Promise<DatumParameters>;
     fetchAndParseOrderDatum(datumHash: string): Promise<DatumParameters>;
