@@ -66,7 +66,7 @@ export class LiquidityPool {
         return adjustedReserveA / adjustedReserveB;
     }
 
-    async updateReserves() {
+    async updateReserves(): Promise<boolean> {
         try {
             const liquidityPool = await this.dex.liquidityPoolFromPoolId(
                 this.poolId
@@ -78,12 +78,14 @@ export class LiquidityPool {
 
             this.reserveA = liquidityPool.reserveA;
             this.reserveB = liquidityPool.reserveB;
+            return true;
         } catch (e) {
             handleError(e);
+            return false;
         }
     }
 
-    async updatePoolData() {
-        await this.updateReserves();
+    async updatePoolData(): Promise<boolean> {
+        return await this.updateReserves();
     }
 }

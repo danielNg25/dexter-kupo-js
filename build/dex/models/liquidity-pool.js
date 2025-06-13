@@ -38,12 +38,14 @@ export class LiquidityPool {
                 throw Error(`Error updating reserves ${this.dex.identifier} - ${this.poolId}`);
             this.reserveA = liquidityPool.reserveA;
             this.reserveB = liquidityPool.reserveB;
+            return true;
         }
         catch (e) {
             handleError(e);
+            return false;
         }
     }
     async updatePoolData() {
-        await this.updateReserves();
+        return await this.updateReserves();
     }
 }

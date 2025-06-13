@@ -17,6 +17,6 @@ export declare class LiquidityPool {
     get uuid(): string;
     get pair(): string;
     get price(): number;
-    updateReserves(): Promise<void>;
-    updatePoolData(): Promise<void>;
+    updateReserves(): Promise<boolean>;
+    updatePoolData(): Promise<boolean>;
 }
