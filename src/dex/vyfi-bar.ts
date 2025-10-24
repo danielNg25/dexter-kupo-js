@@ -1,18 +1,10 @@
 import { KupoApi } from '../KupoApi';
 import { Token, tokenName } from '../models';
 import { Unit, UTXO } from '../types';
-import {
-    compareTokenWithPolicy,
-    identifierToAsset,
-    LOVELACE,
-    retry,
-} from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
-import order from './definitions/chadswap/order';
+import pool from './definitions/vyfi-bar/pool';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
 import { cborToDatumJson } from './definitions/utils';
-import { BaseDex } from './models/base-dex';
-import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
 
 export type Rate = {
@@ -20,7 +12,7 @@ export type Rate = {
     derivedAsset: bigint;
 };
 
-export class ChadSwap {
+export class VyfiBar {
     public readonly identifier: string = DEX_IDENTIFIERS.VYFIBAR;
     public readonly kupoApi: KupoApi;
 
@@ -30,11 +22,17 @@ export class ChadSwap {
 
     async getRate(poolIdentifier: string): Promise<Rate> {
         const utxos = await this.rateUtxos(poolIdentifier);
-        const baseTokenAmount = utxos[0].amount[0].quantity;
-        const datum = await this.kupoApi.datum(poolIdentifier);
+        const utxo = utxos[0];
+        const baseAsset = utxo.amount.find(
+            (asset) =>
+                asset.unit !== 'lovelace' &&
+                !asset.unit.includes(poolIdentifier.split('.').join(''))
+        );
+        const baseAssetAmount = baseAsset?.quantity;
+        const datum = await this.kupoApi.datum(utxo.data_hash!);
         const rate = await this.parseOrderDatum(datum);
         return {
-            baseAsset: BigInt(baseTokenAmount),
+            baseAsset: BigInt(baseAssetAmount!),
             derivedAsset: BigInt(rate.ReserveA!),
         };
     }
@@ -53,7 +51,7 @@ export class ChadSwap {
             let jsonDatum = cborToDatumJson(datum);
 
             const builder: DefinitionBuilder =
-                await new DefinitionBuilder().loadDefinition(order as any);
+                await new DefinitionBuilder().loadDefinition(pool as any);
 
             const parameters: DatumParameters = builder.pullParameters(
                 jsonDatum as DefinitionConstr
