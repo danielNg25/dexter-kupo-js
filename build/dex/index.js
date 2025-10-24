@@ -10,3 +10,4 @@ export * from './wingriders-v2';
 export * from './cswap';
 export * from './chadswap';
 export * from './utils';
+export * from './vyfi-bar';
