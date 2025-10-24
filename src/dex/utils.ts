@@ -12,6 +12,7 @@ export enum DEX_IDENTIFIERS {
     MUESLISWAP = 'MuesliSwap',
     MINSWAPSTABLE = 'MinswapStable',
     CSWAP = 'CSwap',
+    VYFIBAR = 'VyfiBar',
 }
 
 export type PoolData = {
