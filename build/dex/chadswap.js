@@ -1,3 +1,4 @@
+import { tokenIdentifier } from '../models';
 import { compareTokenWithPolicy, identifierToAsset, } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import order from './definitions/chadswap/order';
@@ -30,6 +31,31 @@ export class ChadSwap {
             }
         }));
         return orders;
+    }
+    async allOrderBooks() {
+        const orders = await this.getAllOrders();
+        let orderBooks = new Map();
+        for (const order of orders.buyOrders) {
+            const tokenId = tokenIdentifier(order.asset);
+            if (!orderBooks.has(tokenId)) {
+                orderBooks.set(tokenId, {
+                    buyOrders: [],
+                    sellOrders: [],
+                });
+            }
+            orderBooks.get(tokenId)?.buyOrders.push(order);
+        }
+        for (const order of orders.sellOrders) {
+            const tokenId = tokenIdentifier(order.asset);
+            if (!orderBooks.has(tokenId)) {
+                orderBooks.set(tokenId, {
+                    buyOrders: [],
+                    sellOrders: [],
+                });
+            }
+            orderBooks.get(tokenId)?.sellOrders.push(order);
+        }
+        return orderBooks;
     }
     async getOrdersByAsset(asset) {
         const orders = await this.getAllOrders();

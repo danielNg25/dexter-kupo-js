@@ -9,3 +9,4 @@ export declare class Asset {
 }
 export type Token = Asset | 'lovelace';
 export declare const tokenName: (token: Token) => string;
+export declare const tokenIdentifier: (token: Token) => string;

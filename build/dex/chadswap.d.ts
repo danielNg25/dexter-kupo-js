@@ -21,6 +21,7 @@ export declare class ChadSwap {
     readonly orderAddress: string;
     constructor(kupoApi: KupoApi);
     getAllOrders(): Promise<OrderBook>;
+    allOrderBooks(): Promise<Map<string, OrderBook>>;
     getOrdersByAsset(asset: string): Promise<OrderBook>;
     orderFromUtxo(utxo: UTXO): Promise<{
         order: Order;

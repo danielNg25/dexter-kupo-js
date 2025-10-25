@@ -18,3 +18,6 @@ export class Asset {
 export const tokenName = (token) => {
     return token === 'lovelace' ? 'ADA' : token.assetName;
 };
+export const tokenIdentifier = (token) => {
+    return token instanceof Asset ? token.identifier() : token;
+};
