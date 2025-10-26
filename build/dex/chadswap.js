@@ -1,9 +1,10 @@
 import { tokenIdentifier } from '../models';
-import { compareTokenWithPolicy, identifierToAsset, } from '../utils';
+import { compareTokenWithPolicy, identifierToAsset } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import order from './definitions/chadswap/order';
 import { cborToDatumJson } from './definitions/utils';
 import { DEX_IDENTIFIERS } from './utils';
+import orderPriceDenomNull from './definitions/chadswap/orderPriceDenomNull';
 export class ChadSwap {
     constructor(kupoApi) {
         this.identifier = DEX_IDENTIFIERS.CHADSWAP;
@@ -11,6 +12,7 @@ export class ChadSwap {
          * On-Chain constants.
          */
         this.orderAddress = 'addr1wxxxdudv3dtaa09tngrm8wds54v45kkhdcau4e6keqh0uncksc7pn';
+        this.orderAddress2 = 'addr1w84q0y2wwfj5efd9ch3x492edeh6pdwycvt7g030jfzhagg5ftr54';
         this.kupoApi = kupoApi;
     }
     async getAllOrders() {
@@ -67,23 +69,39 @@ export class ChadSwap {
     async orderFromUtxo(utxo) {
         if (!utxo.data_hash)
             return undefined;
+        const orderData = await this.fetchAndParseOrderDatum(utxo.data_hash);
+        if (!orderData)
+            return undefined;
         return {
-            order: await this.fetchAndParseOrderDatum(utxo.data_hash),
+            order: orderData,
             isBuy: utxo.amount.length === 1,
         };
     }
     async allOrderUtxos() {
-        return await this.kupoApi.get(this.orderAddress, true);
+        let utxoPromises = await Promise.all([
+            this.kupoApi.get(this.orderAddress, true),
+            this.kupoApi.get(this.orderAddress2, true),
+        ]);
+        return utxoPromises[0].concat(utxoPromises[1]);
     }
     async parseOrderDatum(datum) {
+        let jsonDatum = cborToDatumJson(datum);
         try {
-            let jsonDatum = cborToDatumJson(datum);
             const builder = await new DefinitionBuilder().loadDefinition(order);
             const parameters = builder.pullParameters(jsonDatum);
             return parameters;
         }
         catch (error) {
-            throw new Error(`Failed to parse order datum: ${error}`);
+            console.log('Json Datum', jsonDatum);
+            try {
+                const builder = await new DefinitionBuilder().loadDefinition(orderPriceDenomNull);
+                const parameters = builder.pullParameters(jsonDatum);
+                return parameters;
+            }
+            catch (error) {
+                console.log('Failed to parse order datum: ${error}');
+                return undefined;
+            }
         }
     }
     async fetchAndParseOrderDatum(datumHash) {
@@ -92,9 +110,12 @@ export class ChadSwap {
             throw new Error(`Datum not found for hash: ${datumHash}`);
         }
         let orderData = await this.parseOrderDatum(datum);
+        if (!orderData) {
+            return undefined;
+        }
         return {
             price: BigInt(orderData.UnitPrice),
-            priceDenominator: BigInt(orderData.UnitPriceDenominator),
+            priceDenominator: BigInt(orderData.UnitPriceDenominator ?? 1),
             asset: identifierToAsset(String(orderData.TokenPolicyId) +
                 String(orderData.TokenAssetName)),
             amount: BigInt(orderData.RemainingAmount),

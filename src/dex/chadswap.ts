@@ -1,19 +1,13 @@
 import { KupoApi } from '../KupoApi';
 import { Token, tokenIdentifier, tokenName } from '../models';
 import { Unit, UTXO } from '../types';
-import {
-    compareTokenWithPolicy,
-    identifierToAsset,
-    LOVELACE,
-    retry,
-} from '../utils';
+import { compareTokenWithPolicy, identifierToAsset } from '../utils';
 import { DefinitionBuilder } from './definitions/definition-builder';
 import order from './definitions/chadswap/order';
 import { DatumParameters, DefinitionConstr } from './definitions/types';
 import { cborToDatumJson } from './definitions/utils';
-import { BaseDex } from './models/base-dex';
-import { LiquidityPool } from './models/liquidity-pool';
 import { DEX_IDENTIFIERS } from './utils';
+import orderPriceDenomNull from './definitions/chadswap/orderPriceDenomNull';
 
 export type Order = {
     price: bigint;
@@ -35,6 +29,8 @@ export class ChadSwap {
      */
     public readonly orderAddress: string =
         'addr1wxxxdudv3dtaa09tngrm8wds54v45kkhdcau4e6keqh0uncksc7pn';
+    public readonly orderAddress2: string =
+        'addr1w84q0y2wwfj5efd9ch3x492edeh6pdwycvt7g030jfzhagg5ftr54';
 
     constructor(kupoApi: KupoApi) {
         this.kupoApi = kupoApi;
@@ -105,20 +101,25 @@ export class ChadSwap {
         utxo: UTXO
     ): Promise<{ order: Order; isBuy: boolean } | undefined> {
         if (!utxo.data_hash) return undefined;
+        const orderData = await this.fetchAndParseOrderDatum(utxo.data_hash);
+        if (!orderData) return undefined;
         return {
-            order: await this.fetchAndParseOrderDatum(utxo.data_hash),
+            order: orderData,
             isBuy: utxo.amount.length === 1,
         };
     }
 
     async allOrderUtxos(): Promise<UTXO[]> {
-        return await this.kupoApi.get(this.orderAddress, true);
+        let utxoPromises = await Promise.all([
+            this.kupoApi.get(this.orderAddress, true),
+            this.kupoApi.get(this.orderAddress2, true),
+        ]);
+        return utxoPromises[0].concat(utxoPromises[1]);
     }
 
-    async parseOrderDatum(datum: string): Promise<DatumParameters> {
+    async parseOrderDatum(datum: string): Promise<DatumParameters | undefined> {
+        let jsonDatum = cborToDatumJson(datum);
         try {
-            let jsonDatum = cborToDatumJson(datum);
-
             const builder: DefinitionBuilder =
                 await new DefinitionBuilder().loadDefinition(order as any);
 
@@ -128,22 +129,42 @@ export class ChadSwap {
 
             return parameters;
         } catch (error) {
-            throw new Error(`Failed to parse order datum: ${error}`);
+            console.log('Json Datum', jsonDatum);
+            try {
+                const builder: DefinitionBuilder =
+                    await new DefinitionBuilder().loadDefinition(
+                        orderPriceDenomNull as any
+                    );
+
+                const parameters: DatumParameters = builder.pullParameters(
+                    jsonDatum as DefinitionConstr
+                );
+
+                return parameters;
+            } catch (error) {
+                console.log('Failed to parse order datum: ${error}');
+                return undefined;
+            }
         }
     }
 
-    async fetchAndParseOrderDatum(datumHash: string): Promise<Order> {
+    async fetchAndParseOrderDatum(
+        datumHash: string
+    ): Promise<Order | undefined> {
         const datum = await this.kupoApi.datum(datumHash);
-
         if (!datum) {
             throw new Error(`Datum not found for hash: ${datumHash}`);
         }
 
         let orderData = await this.parseOrderDatum(datum);
 
+        if (!orderData) {
+            return undefined;
+        }
+
         return {
             price: BigInt(orderData.UnitPrice!),
-            priceDenominator: BigInt(orderData.UnitPriceDenominator!),
+            priceDenominator: BigInt(orderData.UnitPriceDenominator ?? 1),
             asset: identifierToAsset(
                 String(orderData.TokenPolicyId!) +
                     String(orderData.TokenAssetName!)

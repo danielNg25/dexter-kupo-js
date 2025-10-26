@@ -19,6 +19,7 @@ export declare class ChadSwap {
      * On-Chain constants.
      */
     readonly orderAddress: string;
+    readonly orderAddress2: string;
     constructor(kupoApi: KupoApi);
     getAllOrders(): Promise<OrderBook>;
     allOrderBooks(): Promise<Map<string, OrderBook>>;
@@ -28,6 +29,6 @@ export declare class ChadSwap {
         isBuy: boolean;
     } | undefined>;
     allOrderUtxos(): Promise<UTXO[]>;
-    parseOrderDatum(datum: string): Promise<DatumParameters>;
-    fetchAndParseOrderDatum(datumHash: string): Promise<Order>;
+    parseOrderDatum(datum: string): Promise<DatumParameters | undefined>;
+    fetchAndParseOrderDatum(datumHash: string): Promise<Order | undefined>;
 }
