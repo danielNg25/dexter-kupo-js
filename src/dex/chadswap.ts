@@ -129,7 +129,6 @@ export class ChadSwap {
 
             return parameters;
         } catch (error) {
-            console.log('Json Datum', jsonDatum);
             try {
                 const builder: DefinitionBuilder =
                     await new DefinitionBuilder().loadDefinition(
